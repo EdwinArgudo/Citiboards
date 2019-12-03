@@ -22,7 +22,7 @@ export default function withAuth(ComponentToProtect) {
 
         render() {
             if (this.state.redirect) {
-                return <Redirect to="/login" />;
+                return <Redirect to="/admin" />;
             }
             return <ComponentToProtect {...this.props} />;
         }

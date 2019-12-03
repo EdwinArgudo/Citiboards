@@ -39,7 +39,7 @@ export default class Login extends Component {
     }
     render() {
         if(this.state.redirect){
-            return ( <Redirect to="/panel" /> );
+            return ( <Redirect to="/admin/panel" /> );
         }
         return (
             <div class="jumbotron">

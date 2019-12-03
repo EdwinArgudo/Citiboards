@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { BrowserRouter, Link, Route, Switch, Redirect } from 'react-router-dom';
 import axios from 'axios'
-import StationSimulator from './StationSimulator'
 
 export default class Profile extends Component {
     constructor() {
@@ -36,10 +35,10 @@ export default class Profile extends Component {
     }
     render() {
         return (
-            <div class="jumbotron">
-                <h1 class="display-3">Control Panel</h1>
+            <div class="container">
+                <h1 class="display-3">Station Simulator</h1>
                 <p class="lead">
-                    <Link to="/admin/logout"><a class="btn btn-primary btn-lg" href="#" role="button">Log Out</a></Link>
+                    
                 </p>
             </div>
         );

@@ -7,6 +7,6 @@ export default class LogOut extends Component {
         axios.get('/api/v1/admin/logout')
     }
     render() {
-        return (<Redirect to="/login" />);
+        return (<Redirect to="/admin" />);
     }
 }

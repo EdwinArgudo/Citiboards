@@ -27,7 +27,7 @@ CREATE TABLE users (
 );
 
 CREATE TABLE boards (
-    board_id INT PRIMARY KEY NOT NULL
+    board_id INT PRIMARY KEY
 );
 
 CREATE TABLE stations (
@@ -39,11 +39,24 @@ CREATE TABLE stations (
 CREATE TABLE boards_stations (
     board_id INT PRIMARY KEY REFERENCES boards(board_id),
     station_id INT REFERENCES stations(station_id) NOT NULL,
-    board_status use_status NOT NULL
+    board_status use_status NOT NULL,
+    last_transaction_time TIME(2) NOT NULL
 );
 
 
-INSERT INTO authentication(id, username, password, user_type) VALUES(1,'e','e','user');
-INSERT INTO authentication(id, username, password, user_type) VALUES(2,'a','a','admin');
+INSERT INTO authentication(id, username, password, user_type) VALUES (1,'e','e','user');
+INSERT INTO authentication(id, username, password, user_type) VALUES (2,'a','a','admin');
 
-INSERT INTO users(user_id, first_name, last_name, email, phone_number, credit_card) VALUES (1, 'e', 'e', 'e@e', 'e', 'e');
+INSERT INTO users(user_id, first_name, last_name, email, phone_number, credit_card)
+VALUES (1, 'e', 'e', 'e@e', 'e', 'e');
+
+INSERT INTO boards(board_id) VALUES (1);
+INSERT INTO boards(board_id) VALUES (2);
+INSERT INTO boards(board_id) VALUES (3);
+INSERT INTO boards(board_id) VALUES (4);
+INSERT INTO boards(board_id) VALUES (5);
+INSERT INTO boards(board_id) VALUES (6);
+
+INSERT INTO stations(station_id, location, capacity) VALUES (1, 'Central Park', 20);
+INSERT INTO stations(station_id, location, capacity) VALUES (2, 'WaSquaPa', 25);
+INSERT INTO stations(station_id, location, capacity) VALUES (3, 'Oculus', 15);
