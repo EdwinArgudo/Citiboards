@@ -5,12 +5,14 @@ Installing postgresql, nginx, node, redis
 
 ### Installing
 If you have mac install them through homebrew
-i.e
+i.e. :
+```
 brew update
 brew install nginx
 brew install postgresql
 brew install redis
 brew install node
+```
 
 ### Nginx
 Nginx will serve the production build files from react so dont worry about that right now

@@ -15,6 +15,14 @@ export default class AdminApp extends Component {
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
+
+                <div class="collapse navbar-collapse" id="navbarColor01">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item active">
+                        <Link to={`${this.props.match.url}/logout`}><a class="nav-link" href="#">Logout</a></Link>
+                        </li>
+                    </ul>
+                </div>
             </nav>
             <div class="container mt-3">
                 <Switch>

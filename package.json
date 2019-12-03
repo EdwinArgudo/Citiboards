@@ -19,6 +19,7 @@
     "express-session": "^1.17.0",
     "jsonwebtoken": "^8.5.1",
     "pg": "^7.14.0",
-    "redis": "^2.8.0"
+    "redis": "^2.8.0",
+    "time-stamp": "^2.2.0"
   }
 }
