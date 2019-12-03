@@ -1,5 +1,7 @@
 import React, { Component } from 'react'
+import { Redirect } from 'react-router-dom'
 import axios from 'axios'
+
 export default class Register extends Component {
     constructor(props) {
         super(props)
@@ -31,12 +33,11 @@ export default class Register extends Component {
             credit_card: this.state.credit_card
         })
         .then(res => {
-            console.log(res)
-            if (res.status === 200) {
-                this.props.history.push('/profile');
-            } else {
-                const error = new Error(res.error);
+            if (res['data']['error']) {
+                const error = new Error(res['data']['error']);
                 throw error;
+            } else {
+                this.setState({ redirect: true })
             }
         })
         .catch(err => {
@@ -45,6 +46,9 @@ export default class Register extends Component {
         });
     }
     render() {
+        if(this.state.redirect){
+            return ( <Redirect to="/profile"/> );
+        }
         return (
             <div class="jumbotron">
                 <h1 class="display-3">Register</h1>

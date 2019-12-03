@@ -20,7 +20,6 @@ userRouter.get('/profile', userRouteAuth, async function (req, res) {
     (async () => {
         const client = await pool.connect()
         const user_id = req.session.key
-        console.log(user_id)
         let user_data = null;
         let username = null;
         try {
@@ -35,7 +34,6 @@ userRouter.get('/profile', userRouteAuth, async function (req, res) {
         res.json({ ...user_data.rows[0], ...username.rows[0] });
 
     })().catch(e => {
-        console.log(e)
         res.json({
           error: e.message
         })
@@ -55,7 +53,7 @@ userRouter.post('/register', async function(req, res) {
         let result = null
         try {
             await client.query('BEGIN')
-            const insertAuth = 'INSERT INTO authentication(username, password, type) VALUES($1,$2,$3) RETURNING id'
+            const insertAuth = 'INSERT INTO authentication(username, password, user_type) VALUES($1,$2,$3) RETURNING id'
             const insertAuthValues = [req.body.username, hashed_pwd, "user"]
             result = await client.query(insertAuth, insertAuthValues)
         } catch (e) {
@@ -82,7 +80,6 @@ userRouter.post('/register', async function(req, res) {
         res.sendStatus(200);
 
     })().catch(e => {
-        console.log(e)
         res.json({
           error: e.message
         })
@@ -97,12 +94,10 @@ userRouter.post('/authenticate', function(req, res) {
         let db_user_id = ''
         let db_pass = ''
         try {
-            const user_data = await client.query('SELECT id, password FROM authentication WHERE username = $1 AND type = $2', [req.body.username, "user"])
+            const user_data = await client.query('SELECT id, password FROM authentication WHERE username = $1 AND user_type = $2', [req.body.username, "user"])
             db_user_id = user_data.rows[0].id
             db_pass = user_data.rows[0].password
-            //console.log(db_user_id, db_pass)
             const correctPassword = await bcryptHelpers.isCorrectPassword(req.body.password, db_pass)
-            console.log(correctPassword)
         } catch (e) {
             throw new Error("Incorrect username or password")
         } finally {
@@ -114,7 +109,6 @@ userRouter.post('/authenticate', function(req, res) {
         res.sendStatus(200);
 
     })().catch(e => {
-        console.log(e)
         res.json({
           error: e.message
         })

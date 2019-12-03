@@ -20,13 +20,11 @@ export default class Login extends Component {
   }
   onSubmit = (event) => {
       event.preventDefault();
-      console.log(this.state)
       axios.post('/api/v1/user/authenticate', {
           username: this.state.username,
           password: this.state.password
       })
       .then(res => {
-        console.log(res)
         if (res['data']['error']) {
             const error = new Error(res['data']['error']);
             throw error;
@@ -35,7 +33,6 @@ export default class Login extends Component {
         }
       })
       .catch(err => {
-        //console.log(res)
         console.error(err);
         alert(err.message);
       });
@@ -50,7 +47,7 @@ export default class Login extends Component {
             <form onSubmit={this.onSubmit}>
               <fieldset>
                 <div class="form-group">
-                  <label>Email address</label>
+                  <label>Username</label>
                   <input type="username"
                       class="form-control"
                       name="username"

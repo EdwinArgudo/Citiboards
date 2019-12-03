@@ -4,7 +4,7 @@ import axios from 'axios'
 
 export default class LogOut extends Component {
     componentDidMount() {
-        axios.get('/api/v1/user/logout')
+        axios.get('/api/v1/admin/logout')
     }
     render() {
         return (<Redirect to="/login" />);

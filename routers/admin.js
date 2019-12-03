@@ -28,10 +28,9 @@ adminRouter.post('/authenticate', function(req, res) {
         let db_user_id = ''
         let db_pass = ''
         try {
-            const user_data = await client.query('SELECT id, password FROM authentication WHERE username = $1 AND type = $2', [req.body.username, "admin"])
+            const user_data = await client.query('SELECT id, password FROM authentication WHERE username = $1 AND user_type = $2', [req.body.username, "admin"])
             db_user_id = user_data.rows[0].id
             db_pass = user_data.rows[0].password
-            //console.log(db_user_id, db_pass)
             const correctPassword = await bcryptHelpers.isCorrectPassword(req.body.password, db_pass)
         } catch (e) {
             throw new Error("Incorrect username or password")
@@ -44,7 +43,6 @@ adminRouter.post('/authenticate', function(req, res) {
         res.sendStatus(200);
 
     })().catch(e => {
-        console.log(e)
         res.json({
           error: e.message
         })
