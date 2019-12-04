@@ -43,7 +43,7 @@ export default class PeekDatabase extends Component {
                     usersData: res['data']['users_data'],
                     stationsData: res['data']['stations_data'],
                     boardsData: res['data']['boards_data'],
-                    message: 'Update entered',
+                    message: 'Data Retrieved',
                     alert: 'good'
                 });
             }
@@ -83,13 +83,13 @@ export default class PeekDatabase extends Component {
         );
 
         const mappedBoardsData = this.state.boardsData.map((row) =>
-        <tr class="table-info" key={row.board_id}>
-            <th scope="row">{row.board_id}</th>
-            <td>{row.station_id}</td>
-            <td>{row.user_id}</td>
-            <td>{row.board_status}</td>
-            <td>{row.last_transaction_time}</td>
-        </tr>
+            <tr class="table-info" key={row.board_id}>
+                <th scope="row">{row.board_id}</th>
+                <td>{row.station_id}</td>
+                <td>{row.user_id}</td>
+                <td>{row.board_status}</td>
+                <td>{row.last_transaction_time}</td>
+            </tr>
         );
 
         let message = ""
@@ -104,13 +104,15 @@ export default class PeekDatabase extends Component {
         }
         return (
             <div class="container-fluid mt-3 mb-3">
-                <h1 class="display-5">Station Simulator</h1>
+                <h1 class="display-5">Peek at Database</h1>
                 { message }
                 <form onSubmit={this.onSubmit}>
                     <fieldset>
                         <input type="submit" value="Refresh Data" class="btn btn-success"/>
                     </fieldset>
+                    <br />
                     <div>
+                        <h4>Users Table</h4>
                         <table class="table table-hover">
                             <thead>
                                 <tr>
@@ -126,11 +128,12 @@ export default class PeekDatabase extends Component {
                         </table>
                     </div>
                     <div>
+                        <h4>Stations Table</h4>
                         <table class="table table-hover">
                             <thead>
                                 <tr>
                                     <th scope="col">Station ID</th>
-                                    <th scope="col">location</th>
+                                    <th scope="col">Location</th>
                                     <th scope="col">Capacity</th>
                                 </tr>
                             </thead>
@@ -138,6 +141,7 @@ export default class PeekDatabase extends Component {
                         </table>
                     </div>
                     <div>
+                        <h4>Board Table</h4>
                         <table class="table table-hover">
                             <thead>
                                 <tr>

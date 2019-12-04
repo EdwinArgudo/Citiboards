@@ -24,14 +24,11 @@ export default class AdminApp extends Component {
                     </ul>
                 </div>
             </nav>
-            <div class="container mt-3">
-                <Switch>
-                    <Route path={`${this.props.match.path}/`} exact component={Login} />
-                    <Route path={`${this.props.match.path}/panel`} component={withAdminAuth(Panel)} />
-                    <Route path={`${this.props.match.path}/logout`} component={withAdminAuth(LogOut)} />
-                </Switch>
-            </div>
-
+            <Switch>
+                <Route path={`${this.props.match.path}/`} exact component={Login} />
+                <Route path={`${this.props.match.path}/panel`} component={withAdminAuth(Panel)} />
+                <Route path={`${this.props.match.path}/logout`} component={withAdminAuth(LogOut)} />
+            </Switch>
             </BrowserRouter>
         );
     }

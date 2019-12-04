@@ -44,6 +44,4 @@ apiRouterV1.use('/user', userRouter)
 apiRouterV1.use('/admin', adminRouter)
 app.use('/api/v1', apiRouterV1)
 
-
-
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
