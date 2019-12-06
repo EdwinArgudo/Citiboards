@@ -16,7 +16,6 @@ export default class App extends Component {
         const AuthLogout = withAuth(LogOut)
         return (
             <BrowserRouter>
-                <div class="container mt-3">
                     <Switch>
                         <Route path="/" exact>
                             <Nav />
@@ -40,7 +39,6 @@ export default class App extends Component {
                         </Route>
                         <Route path="/admin" component={AdminApp} />
                     </Switch>
-                </div>
             </BrowserRouter>
         );
     }
