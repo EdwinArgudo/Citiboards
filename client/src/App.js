@@ -16,29 +16,29 @@ export default class App extends Component {
         const AuthLogout = withAuth(LogOut)
         return (
             <BrowserRouter>
-                    <Switch>
-                        <Route path="/" exact>
-                            <Nav />
-                            <Home />
-                        </Route>
-                        <Route path="/login" component={Login} >
-                            <Nav />
-                            <Login />
-                        </Route>
-                        <Route path="/register">
-                            <Nav />
-                            <Register />
-                        </Route>
-                        <Route path="/profile" >
-                            <Nav />
-                            < AuthProfile />
-                        </Route>
-                        <Route path="/logout">
-                            <Nav/>
-                            < AuthLogout />
-                        </Route>
-                        <Route path="/admin" component={AdminApp} />
-                    </Switch>
+                <Switch>
+                    <Route path="/" exact>
+                        <Nav />
+                        <Home />
+                    </Route>
+                    <Route path="/login" component={Login} >
+                        <Nav />
+                        <Login />
+                    </Route>
+                    <Route path="/register">
+                        <Nav />
+                        <Register />
+                    </Route>
+                    <Route path="/profile" >
+                        <Nav />
+                        < AuthProfile />
+                    </Route>
+                    <Route path="/logout">
+                        <Nav/>
+                        < AuthLogout />
+                    </Route>
+                    <Route path="/admin" component={AdminApp} />
+                </Switch>
             </BrowserRouter>
         );
     }

@@ -37,7 +37,7 @@ CREATE TABLE boards (
     station_id INT REFERENCES stations(station_id) NOT NULL,
     user_id INT REFERENCES users(user_id) NOT NULL,
     board_status use_status NOT NULL,
-    last_transaction_time TIME NOT NULL
+    last_transaction_time TIMESTAMP NOT NULL
 );
 
 INSERT INTO authentication(id, username, password, user_type) VALUES (1,'stationmanager','password','user');
@@ -54,14 +54,14 @@ INSERT INTO stations(station_id, location, capacity) VALUES (2, 'WaSquaPa', 25);
 INSERT INTO stations(station_id, location, capacity) VALUES (3, 'Oculus', 15);
 
 INSERT INTO boards(board_id, station_id, user_id, board_status, last_transaction_time)
-VALUES (1, 1, 1, 'parked', '00:00:01');
+VALUES (1, 1, 1, 'parked', '1999-01-08 00:00:01');
 INSERT INTO boards(board_id, station_id, user_id, board_status, last_transaction_time)
-VALUES (2, 2, 1, 'parked', '00:00:01');
+VALUES (2, 2, 1, 'parked', '1999-01-08 00:00:01');
 INSERT INTO boards(board_id, station_id, user_id, board_status, last_transaction_time)
-VALUES (3, 3, 1, 'parked', '00:00:01');
+VALUES (3, 3, 1, 'parked', '1999-01-08 00:00:01');
 INSERT INTO boards(board_id, station_id, user_id, board_status, last_transaction_time)
-VALUES (4, 1, 1, 'parked', '00:00:01');
+VALUES (4, 1, 1, 'parked', '1999-01-08 00:00:01');
 INSERT INTO boards(board_id, station_id, user_id, board_status, last_transaction_time)
-VALUES (5, 2, 1, 'parked', '00:00:01');
+VALUES (5, 2, 1, 'parked', '1999-01-08 00:00:01');
 INSERT INTO boards(board_id, station_id, user_id, board_status, last_transaction_time)
-VALUES (6, 3, 1, 'parked', '00:00:01');
+VALUES (6, 3, 1, 'parked', '1999-01-08 00:00:01');

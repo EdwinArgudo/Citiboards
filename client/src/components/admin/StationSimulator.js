@@ -10,6 +10,7 @@ export default class StationSimulator extends Component {
             boardID: '',
             boardStatus: '',
             userID: '',
+            stationInventory: [],
             message: '',
             alert: ''
             // ,
@@ -52,6 +53,7 @@ export default class StationSimulator extends Component {
                     message: 'Update entered',
                     alert: 'good'
                 });
+                this.getInventoryData()
             }
         })
         .catch(err => {
@@ -62,6 +64,37 @@ export default class StationSimulator extends Component {
                 alert: 'bad'
             });
         });
+    }
+
+    getInventoryData = () => {
+        axios.get('/api/v1/admin/inventory')
+        .then(res => {
+            console.log(res)
+            if (res['data']['error']) {
+                this.setState({
+                    message: res['data']['error'],
+                    alert: 'bad'
+                });
+                const error = new Error(res['data']['error']);
+                throw error;
+            } else {
+                this.setState({
+                    stationInventory: res['data']['stations_data']
+                })
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            //alert(err.message);
+            this.setState({
+                message: err.message,
+                alert: 'bad'
+            });
+        });
+    }
+
+    componentDidMount(){
+        this.getInventoryData()
     }
 
     render() {
@@ -75,62 +108,87 @@ export default class StationSimulator extends Component {
                 </div>
             )
         }
+
+        const mappedStationsInventory = this.state.stationInventory.map((station) =>
+                <tr class="table-info" key={station.station_id}>
+                    <th scope="row">{station.station_id}</th>
+                    <td>{station.count}</td>
+                </tr>
+        )
+
+
         return (
             <div class="container-fluid mt-3 mb-3">
-                <h1 class="display-5">Station Simulator</h1>
-                { message }
-                <form onSubmit={this.onSubmit}>
-                    <fieldset>
-                        <b>UPDATE:</b>
-                        <div class="form-group">
-                            <label>Board</label>
-                            <input
-                            type="boardID"
-                            class="form-control"
-                            name="boardID"
-                            placeholder="Enter BoardID"
-                            value={this.state.boardID}
-                            onChange={this.handleInputChange}
-                            required />
-                        </div>
-                        <b>AT</b>
-                        <div class="form-group">
-                            <label>Station</label>
-                            <input
-                            type="stationID"
-                            name="stationID"
-                            placeholder="Enter StationID "
-                            value={this.state.stationID}
-                            onChange={this.handleInputChange}
-                            class="form-control"  />
-                        </div>
-                        <b>WITH</b>
-                        <div class="form-group">
-                            <label>Board Status</label>
-                            <input
-                            type="boardStatus"
-                            name="boardStatus"
-                            placeholder="Enter Board Status ('in_use' or 'parked') "
-                            value={this.state.boardStatus}
-                            onChange={this.handleInputChange}
-                            required
-                            class="form-control"  />
-                        </div>
-                        <b>BY</b>
-                        <div class="form-group">
-                            <label>User</label>
-                            <input
-                            type="userID"
-                            name="userID"
-                            placeholder="Enter UserID "
-                            value={this.state.userID}
-                            onChange={this.handleInputChange}
-                            required
-                            class="form-control"  />
-                        </div>
-                        <input type="submit" value="Simulate Board" class="btn btn-primary"/>
-                    </fieldset>
-                </form>
+            { message }
+                <div class="row">
+                    <div class="col-lg-6">
+                        <h1 class="display-5">Station Simulator</h1>
+                        <form onSubmit={this.onSubmit}>
+                            <fieldset>
+                                <b>UPDATE:</b>
+                                <div class="form-group">
+                                    <label>Board</label>
+                                    <input
+                                    type="boardID"
+                                    class="form-control"
+                                    name="boardID"
+                                    placeholder="Enter BoardID"
+                                    value={this.state.boardID}
+                                    onChange={this.handleInputChange}
+                                    required />
+                                </div>
+                                <b>AT</b>
+                                <div class="form-group">
+                                    <label>Station</label>
+                                    <input
+                                    type="stationID"
+                                    name="stationID"
+                                    placeholder="Enter StationID "
+                                    value={this.state.stationID}
+                                    onChange={this.handleInputChange}
+                                    class="form-control"  />
+                                </div>
+                                <b>WITH</b>
+                                <div class="form-group">
+                                    <label>Board Status</label>
+                                    <input
+                                    type="boardStatus"
+                                    name="boardStatus"
+                                    placeholder="Enter Board Status ('in_use' or 'parked') "
+                                    value={this.state.boardStatus}
+                                    onChange={this.handleInputChange}
+                                    required
+                                    class="form-control"  />
+                                </div>
+                                <b>BY</b>
+                                <div class="form-group">
+                                    <label>User</label>
+                                    <input
+                                    type="userID"
+                                    name="userID"
+                                    placeholder="Enter UserID "
+                                    value={this.state.userID}
+                                    onChange={this.handleInputChange}
+                                    required
+                                    class="form-control"  />
+                                </div>
+                                <input type="submit" value="Simulate Board" class="btn btn-primary"/>
+                            </fieldset>
+                        </form>
+                    </div>
+                    <div class="col-lg-4 offset-lg-1">
+                        <h1 class="display-5">Live Inventory</h1>
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Station ID</th>
+                                    <th scope="col">Count</th>
+                                </tr>
+                            </thead>
+                            { mappedStationsInventory }
+                        </table>
+                    </div>
+                </div>
             </div>
         );
     }

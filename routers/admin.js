@@ -51,7 +51,10 @@ adminRouter.post('/authenticate', function(req, res) {
 adminRouter.post('/station-simulator', adminRouteAuth, function(req, res) {
     (async () => {
         const client = await pool.connect()
-        const _timestamp = timestamp("HH:mm:ss")
+        const date = timestamp("YYYY-MM-DD")
+        const _time = timestamp("HH:mm:ss")
+        const _timestamp = `${date} ${_time}`
+        console.log(_timestamp)
         let curr_data = null;
 
         try {
@@ -69,6 +72,23 @@ adminRouter.post('/station-simulator', adminRouteAuth, function(req, res) {
         if(!((currAtStation && beingCheckedOut) || (!currAtStation && !beingCheckedOut))){
             throw new Error("Invalid Update")
         }
+
+        if(!beingCheckedOut){
+            try {
+                const station_inventory = await client.query("SELECT COUNT(*) FROM boards WHERE board_status = 'parked' AND station_id = $1", [req.body.stationID])
+                const station_capacity = await client.query("SELECT capacity FROM stations WHERE station_id = $1", [req.body.stationID])
+                const inventory = station_inventory.rows[0].count
+                const capacity = station_capacity.rows[0].capacity
+                if(inventory === capacity){
+                    throw new Error("Station at Max Capacity")
+                    client.release()
+                }
+            }  catch(e) {
+                throw new Error("Station at Max Capacity")
+                client.release()
+            }
+        }
+
 
         const curr_user = curr_data.rows[0].user_id
 
@@ -122,6 +142,29 @@ adminRouter.get('/peek-database', function(req, res) {
             users_data: users_data.rows,
             stations_data: stations_data.rows,
             boards_data: boards_data.rows
+        });
+
+    })().catch(e => {
+        res.json({
+          error: e.message
+        })
+    })
+})
+
+adminRouter.get('/inventory', function(req,res){
+    (async () => {
+        const client = await pool.connect()
+        let stations_data = null
+        try {
+            stations_data = await client.query("SELECT station_id, COUNT(*) FROM boards WHERE board_status = 'parked' GROUP BY station_id", [])
+        } catch (e) {
+            throw new Error("Database Error")
+        } finally {
+            client.release()
+        }
+
+        res.json({
+            stations_data: stations_data.rows
         });
 
     })().catch(e => {
