@@ -40,18 +40,39 @@ CREATE TABLE boards (
     last_transaction_time TIMESTAMP NOT NULL
 );
 
-INSERT INTO authentication(id, username, password, user_type) VALUES (1,'stationmanager','password','user');
-INSERT INTO authentication(id, username, password, user_type) VALUES (2,'u','u','user');
-INSERT INTO authentication(id, username, password, user_type) VALUES (3,'a','a','admin');
+INSERT INTO authentication(id, username, password, user_type) VALUES (1,'stationmanager','stationmanager','user');
+INSERT INTO authentication(id, username, password, user_type) VALUES (2,'a','a','admin');
+
+INSERT INTO authentication(id, username, password, user_type) VALUES (3,'u1','u','user');
+INSERT INTO authentication(id, username, password, user_type) VALUES (4,'u2','u','user');
+INSERT INTO authentication(id, username, password, user_type) VALUES (5,'u3','u','user');
+INSERT INTO authentication(id, username, password, user_type) VALUES (6,'u4','u','user');
+INSERT INTO authentication(id, username, password, user_type) VALUES (7,'u5','u','user');
+INSERT INTO authentication(id, username, password, user_type) VALUES (8,'u6','u','user');
 
 INSERT INTO users(user_id, first_name, last_name, email, phone_number, credit_card)
-VALUES (1, 'stationmanager', 'stationmanager', 'example@example.com', '000000000', '0000 0000 0000 0001');
+VALUES (1, 'stationmanager', 'stationmanager', 'example@example.com', '000000000', '0000 0000 0000 0000');
+
 INSERT INTO users(user_id, first_name, last_name, email, phone_number, credit_card)
-VALUES (2, 'sample', 'sample', 'sample@sample.com', '800888888', '0000 0000 0000 0000');
+VALUES (3, 'sample', 'sample', 'sample1@sample.com', '800888881', '0000 0000 0000 0000');
+INSERT INTO users(user_id, first_name, last_name, email, phone_number, credit_card)
+VALUES (4, 'sample', 'sample', 'sample2@sample.com', '800888882', '0000 0000 0000 0000');
+INSERT INTO users(user_id, first_name, last_name, email, phone_number, credit_card)
+VALUES (5, 'sample', 'sample', 'sample3@sample.com', '800888883', '0000 0000 0000 0000');
+INSERT INTO users(user_id, first_name, last_name, email, phone_number, credit_card)
+VALUES (6, 'sample', 'sample', 'sample4@sample.com', '800888884', '0000 0000 0000 0000');
+INSERT INTO users(user_id, first_name, last_name, email, phone_number, credit_card)
+VALUES (7, 'sample', 'sample', 'sample5@sample.com', '800888885', '0000 0000 0000 0000');
+INSERT INTO users(user_id, first_name, last_name, email, phone_number, credit_card)
+VALUES (8, 'sample', 'sample', 'sample6@sample.com', '800888886', '0000 0000 0000 0000');
 
 INSERT INTO stations(station_id, location, capacity) VALUES (1, 'Central Park', 20);
-INSERT INTO stations(station_id, location, capacity) VALUES (2, 'WaSquaPa', 25);
+INSERT INTO stations(station_id, location, capacity) VALUES (2, 'Washington Square Park', 25);
 INSERT INTO stations(station_id, location, capacity) VALUES (3, 'Oculus', 15);
+INSERT INTO stations(station_id, location, capacity) VALUES (4, 'Rockefeller Center', 20);
+INSERT INTO stations(station_id, location, capacity) VALUES (5, 'Columbus Circle', 25);
+INSERT INTO stations(station_id, location, capacity) VALUES (6, 'Brooklyn Bridge', 15);
+
 
 INSERT INTO boards(board_id, station_id, user_id, board_status, last_transaction_time)
 VALUES (1, 1, 1, 'parked', '1999-01-08 00:00:01');
@@ -60,8 +81,20 @@ VALUES (2, 2, 1, 'parked', '1999-01-08 00:00:01');
 INSERT INTO boards(board_id, station_id, user_id, board_status, last_transaction_time)
 VALUES (3, 3, 1, 'parked', '1999-01-08 00:00:01');
 INSERT INTO boards(board_id, station_id, user_id, board_status, last_transaction_time)
-VALUES (4, 1, 1, 'parked', '1999-01-08 00:00:01');
+VALUES (4, 4, 1, 'parked', '1999-01-08 00:00:01');
 INSERT INTO boards(board_id, station_id, user_id, board_status, last_transaction_time)
-VALUES (5, 2, 1, 'parked', '1999-01-08 00:00:01');
+VALUES (5, 5, 1, 'parked', '1999-01-08 00:00:01');
 INSERT INTO boards(board_id, station_id, user_id, board_status, last_transaction_time)
-VALUES (6, 3, 1, 'parked', '1999-01-08 00:00:01');
+VALUES (6, 6, 1, 'parked', '1999-01-08 00:00:01');
+INSERT INTO boards(board_id, station_id, user_id, board_status, last_transaction_time)
+VALUES (7, 1, 1, 'parked', '1999-01-08 00:00:01');
+INSERT INTO boards(board_id, station_id, user_id, board_status, last_transaction_time)
+VALUES (8, 2, 1, 'parked', '1999-01-08 00:00:01');
+INSERT INTO boards(board_id, station_id, user_id, board_status, last_transaction_time)
+VALUES (9, 3, 1, 'parked', '1999-01-08 00:00:01');
+INSERT INTO boards(board_id, station_id, user_id, board_status, last_transaction_time)
+VALUES (10, 4, 1, 'parked', '1999-01-08 00:00:01');
+INSERT INTO boards(board_id, station_id, user_id, board_status, last_transaction_time)
+VALUES (11, 5, 1, 'parked', '1999-01-08 00:00:01');
+INSERT INTO boards(board_id, station_id, user_id, board_status, last_transaction_time)
+VALUES (12, 6, 1, 'parked', '1999-01-08 00:00:01');

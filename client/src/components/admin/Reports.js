@@ -6,41 +6,64 @@ import StationSimulator from './StationSimulator'
 export default class Reports extends Component {
     constructor() {
         super();
-        // this.state = {
-        //     username: '',
-        //     email: '',
-        //     first_name: '',
-        //     last_name: '',
-        //     phone_number: '',
-        //     payment_info: ''
-        // }
+        this.state = {
+            message: '',
+            alert: ''
+        }
     }
     componentDidMount() {
-        // axios.get('/api/v1/user/profile')
-        // .then(res => {
-        //     console.log(res, "***")
-        //     return res
-        // })
-        // .then(res => {
-        //     const data = res['data']
-        //     this.setState({
-        //         username: data.username,
-        //         email: data.email,
-        //         first_name: data.first_name,
-        //         last_name: data.last_name,
-        //         phone_number: data.phone_number,
-        //         credit_card: data.credit_card
-        //     })
-        // })
-        // .catch(e => console.log(e))
+
     }
+
+    generateReports = (event) => {
+        event.preventDefault();
+        axios.get('/api/v1/admin/generateReports')
+        .then(res => {
+            console.log(res)
+            if (res['data']['error']) {
+                this.setState({
+                    message: res['data']['error'],
+                    alert: 'bad'
+                });
+                const error = new Error(res['data']['error']);
+                throw error;
+            } else {
+                this.setState({
+                    message: "Reports Generated!",
+                    alert: 'good'
+                })
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            //alert(err.message);
+            this.setState({
+                message: err.message,
+                alert: 'bad'
+            });
+        });
+    }
+
     render() {
+        let message = ""
+        if(this.state.message !== ""){
+            message = (
+                 <div class={`alert alert-dismissible alert-${ this.state.alert === "good" ? "success" : "warning"}`}>
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    <h4 class="alert-heading">{ this.state.alert === "good" ? "Success!" : "Error!"}</h4>
+                    <p class="mb-0"> { this.state.message }</p>
+                </div>
+            )
+        }
         return (
             <div class="container-fluid mt-3 mb-3">
                 <h1 class="display-5">Reports</h1>
-                <p class="lead">
-
-                </p>
+                { message }
+                <form onSubmit={this.generateReports}>
+                    <p class="lead">
+                        <input type="submit" class="btn btn-success" value="Generate Reports"/>
+                    </p>
+                </form>
             </div>
         );
     }

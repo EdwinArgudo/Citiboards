@@ -93,6 +93,40 @@ export default class StationSimulator extends Component {
         });
     }
 
+    onLoadRandomData = (event) => {
+        event.preventDefault();
+        this.setState({
+            message: "Loading...",
+            alert: 'good'
+        });
+        axios.get('/api/v1/admin/load-random-data')
+            .then(res => {
+                this.getInventoryData()
+                console.log(res)
+                if (res['data']['error']) {
+                    this.setState({
+                        message: res['data']['error'],
+                        alert: 'bad'
+                    });
+                    const error = new Error(res['data']['error']);
+                    throw error;
+                } else {
+                    this.setState({
+                        message: "Random Data Loaded!",
+                        alert: 'good'
+                    });
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                //alert(err.message);
+                this.setState({
+                    message: err.message,
+                    alert: 'bad'
+                });
+            });
+    }
+
     componentDidMount(){
         this.getInventoryData()
     }
@@ -115,7 +149,6 @@ export default class StationSimulator extends Component {
                     <td>{station.count}</td>
                 </tr>
         )
-
 
         return (
             <div class="container-fluid mt-3 mb-3">
@@ -172,7 +205,7 @@ export default class StationSimulator extends Component {
                                     required
                                     class="form-control"  />
                                 </div>
-                                <input type="submit" value="Simulate Board" class="btn btn-primary"/>
+                                <input type="submit" value="Simulate Board Movement" class="btn btn-primary"/>
                             </fieldset>
                         </form>
                     </div>
@@ -187,6 +220,9 @@ export default class StationSimulator extends Component {
                             </thead>
                             { mappedStationsInventory }
                         </table>
+                        <form onSubmit={this.onLoadRandomData}>
+                            <input type="submit" value="Load Random Data" class="btn btn-success"/>
+                        </form>
                     </div>
                 </div>
             </div>

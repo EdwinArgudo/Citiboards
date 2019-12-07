@@ -17,9 +17,13 @@
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "express-session": "^1.17.0",
+    "fs": "0.0.1-security",
     "jsonwebtoken": "^8.5.1",
+    "node-cron": "^2.0.3",
     "pg": "^7.14.0",
     "redis": "^2.8.0",
+    "shelljs": "^0.8.3",
+    "split": "^1.0.1",
     "time-stamp": "^2.2.0"
   }
 }
