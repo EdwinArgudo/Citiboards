@@ -1,6 +1,14 @@
 import React, { Component } from 'react'
 import { Redirect } from 'react-router-dom'
 import axios from 'axios'
+import "bootstrap-css-only/css/bootstrap.min.css";
+import "mdbreact/dist/css/mdb.css";
+import '@fortawesome/fontawesome-free/css/all.min.css';
+import './css/one-page-wonder.css';
+import { Link } from 'react-router-dom';
+import NavBar from './Nav';
+import { MDBContainer, MDBRow, MDBCol, MDBCard, MDBCardBody, MDBInput, MDBBtn} from 'mdbreact';
+
 
 export default class Register extends Component {
     constructor(props) {
@@ -46,96 +54,117 @@ export default class Register extends Component {
         });
     }
     render() {
-        if(this.state.redirect){
-            return ( <Redirect to="/profile"/> );
-        }
         return (
-            <div class="jumbotron">
-                <h1 class="display-3">Register</h1>
-                <form onSubmit={this.onSubmit}>
-                    <fieldset>
-                        <div class="form-group">
-                            <label>Email address</label>
-                            <input type="username"
-                            class="form-control"
-                            name="username"
-                            placeholder="Enter Username"
-                            value={this.state.username}
-                            onChange={this.handleInputChange}
-                            required />
-                            <small class="form-text text-muted">We'll never share your email with anyone else.</small>
-                        </div>
-                        <div class="form-group">
-                            <label>Password</label>
-                            <input
-                            type="password"
-                            class="form-control"
-                            name="password"
-                            placeholder="Enter Password"
-                            value={this.state.password}
-                            onChange={this.handleInputChange}
-                            required
-                            class="form-control"  />
-                        </div>
-                        <div class="form-group">
-                            <label>First Name</label>
-                            <input
-                            type="first_name"
-                            class="form-control"
-                            name="first_name"
-                            placeholder="Enter First Name"
-                            value={this.state.first_name}
-                            onChange={this.handleInputChange}
-                            required />
-                        </div>
-                        <div class="form-group">
-                            <label>Last Name</label>
-                            <input
-                            type="last_name"
-                            name="last_name"
-                            class="form-control"
-                            placeholder="Enter Last Name"
-                            value={this.state.last_name}
-                            onChange={this.handleInputChange}
-                            required  />
-                        </div>
-                        <div class="form-group">
-                            <label>Email</label>
-                            <input
-                            type="email"
-                            name="email"
-                            class="form-control"
-                            placeholder="Enter Email"
-                            value={this.state.email}
-                            onChange={this.handleInputChange}
-                            required  />
-                        </div>
-                        <div class="form-group">
-                            <label>Phone Number</label>
-                            <input
-                            type="phone_number"
-                            name="phone_number"
-                            class="form-control"
-                            placeholder="Enter Phone Number"
-                            value={this.state.phone_number}
-                            onChange={this.handleInputChange}
-                            required />
-                        </div>
-                        <div class="form-group">
-                            <label>Credit Card</label>
-                            <input
-                            type="credit_card"
-                            name="credit_card"
-                            class="form-control"
-                            placeholder="Enter Credit Card"
-                            value={this.state.credit_card}
-                            onChange={this.handleInputChange}
-                            required />
-                        </div>
-                        <input type="submit" value="Submit" class="btn btn-primary"/>
-                    </fieldset>
-                </form>
+            <div className="bg3">
+                <NavBar/>
+                <br/><br/>
+                <center>
+                <MDBContainer>
+                    <MDBRow>
+                    <MDBCol>
+                            <MDBCol md="6">
+                            <MDBCard >
+                                <div className="header pt-3 peach-gradient">
+                                <MDBRow className="d-flex justify-content-center">
+                                    <h3 className="white-text mb-2 pt-2 font-weight-bold">
+                                    Register
+                                    </h3>
+                                </MDBRow>
+                                </div>
+                                <MDBCardBody className="mx-4 mt-4">
+                                    <MDBInput 
+                                        label="First Name"                                      
+                                        group 
+                                        type="text" 
+                                        validate        
+                                        containerClass="mb-0"
+                                        value={this.state.first_name}
+                                        onChange={this.handleInputChange}
+                                    />
+                                    <MDBInput 
+                                        label="Last Name" 
+                                        group 
+                                        type="text" 
+                                        validate 
+                                        containerClass="mb-0"
+                                        value={this.state.last_name}
+                                        onChange={this.handleInputChange}
+                                    />
+                                    <MDBInput
+                                        label="Username"
+                                        group 
+                                        type="text"
+                                        validate
+                                        containerClass="mb-0"
+                                        value={this.state.username}
+                                        onChange={this.handleInputChange}
+                                    />
+                                    <MDBInput 
+                                        label="Email" 
+                                        group 
+                                        type="email" 
+                                        validate 
+                                        value={this.state.email}
+                                        onChange={this.handleInputChange}
+                                    />
+                                    
+                                    <MDBInput
+                                        label="Password"
+                                        group 
+                                        type="text"
+                                        validate
+                                        containerClass="mb-0"
+                                        value={this.state.password}
+                                        onChange={this.handleInputChange}
+                                    />
+                                    <MDBInput
+                                        label="Phone Number"
+                                        group 
+                                        type="text"
+                                        validate
+                                        containerClass="mb-0"
+                                        value={this.state.phone_number}
+                                        onChange={this.handleInputChange}
+                                    />
+                                    <MDBInput
+                                        label="Credit Card"
+                                        group type="text"
+                                        validate
+                                        containerClass="mb-0"
+                                        value={this.state.credit_card}
+                                        onChange={this.handleInputChange}
+                                    />
+                                <MDBRow className="d-flex align-items-center mb-0 mt-0">
+                                    <MDBCol md="5" className="d-flex align-items-start">
+                                    <div className="text-center">
+                                        <MDBBtn
+                                        color="orange"
+                                        rounded
+                                        type="button"
+                                        className="z-depth-1a"
+                                        onClick={this.onSubmit}
+                                        >
+                                        Sign Up!
+                                        </MDBBtn>
+                                    </div>
+    
+                                    </MDBCol>
+                                    <MDBCol md="7" className="d-flex justify-content-end">
+                                    <div className="font-small grey-text mt-3">
+                                    Have an account? 
+                                    <Link className="nav-link" to="/register">Login</Link>
+                                    </div>
+                                    </MDBCol>
+                                </MDBRow>
+                                </MDBCardBody>
+                            </MDBCard>
+                            </MDBCol>
+                        </MDBCol>
+                    </MDBRow>
+                </MDBContainer>
+                </center>
             </div>
+        
         );
     }
 }

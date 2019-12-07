@@ -5,24 +5,26 @@ export default class Nav extends Component {
 
     render() {
         return (
-            <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-                <Link to="/"><a class="navbar-brand" href="#">CitiBoard</a></Link>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
+            <nav className="navbar navbar-expand-lg navbar-dark navbar-custom fixed-top">
+                <div className="container">
+                <Link className="navbar-brand" to="/">Citiboard</Link>
 
-                <div class="collapse navbar-collapse" id="navbarColor01">
-                    <ul class="navbar-nav mr-auto">
-                        <li class="nav-item active">
-                        <Link to="/"><a class="nav-link" href="#">Home<span class="sr-only">(current)</span></a></Link>
-                        </li>
-                        <li class="nav-item">
-                        <Link to="/login"><a class="nav-link" href="#">Login</a></Link>
-                        </li>
-                        <li class="nav-item">
-                        <Link to="/register"><a class="nav-link" href="#">Register</a></Link>
-                        </li>
+                <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" 
+                aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                    <span className="navbar-toggler-icon"></span>
+                </button>
+                <div className="collapse navbar-collapse" id="navbarResponsive">
+                    <ul className="navbar-nav ml-auto">
+                    <li className="nav-item">
+                    
+                        <Link className="nav-link" to="/login">Login</Link>
+
+                    </li>
+                    <li className="nav-item">
+                            <Link className="nav-link" to="/register">Register</Link>  
+                    </li>
                     </ul>
+                </div>
                 </div>
             </nav>
         );
