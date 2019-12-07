@@ -8,11 +8,22 @@ export default class Reports extends Component {
         super();
         this.state = {
             message: '',
-            alert: ''
+            alert: '',
+            historical:[],
+            stationRebalancing: [],
+            missingBoards:[],
+            HRboardID: ''
         }
     }
     componentDidMount() {
 
+    }
+
+    handleInputChange = (event) => {
+      const { value, name } = event.target;
+      this.setState({
+        [name]: value
+      });
     }
 
     generateReports = (event) => {
@@ -30,7 +41,10 @@ export default class Reports extends Component {
             } else {
                 this.setState({
                     message: "Reports Generated!",
-                    alert: 'good'
+                    alert: 'good',
+                    historical: res.historical,
+                    stationRebalancing: res.stationRebalancing,
+                    missingBoards: res.missingBoards
                 })
             }
         })
@@ -64,7 +78,50 @@ export default class Reports extends Component {
                         <input type="submit" class="btn btn-success" value="Generate Reports"/>
                     </p>
                 </form>
+                <hr class="my-4"/>
+                <div class="card bg-light mb-3">
+                    <div class="card-header">Historical Report</div>
+                    <div class="card-body">
+                        <form onSubmit={this.getHistoricalReport}>
+                            <div class="form-group">
+                                <input
+                                    name="HRboardID"
+                                    placeholder="Enter Board ID"
+                                    value={this.state.HRboardID}
+                                    onChange={this.handleInputChange}
+                                    required
+                                    class="form-control col-md-2"  />
+                            </div>
+                            <p class="lead">
+                                <input type="submit" class="btn btn-info" value="Get Historical Report"/>
+                            </p>
+                        </form>
+                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                    </div>
+                </div>
+                <div class="card bg-light mb-3">
+                    <div class="card-header">Station Rebalancing Report</div>
+                    <div class="card-body">
+                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                        <form onSubmit={this.rebalanceStations}>
+                            <p class="lead">
+                                <input type="submit" class="btn btn-info" value="Rebalance Stations"/>
+                            </p>
+                        </form>
+                    </div>
+                </div>
+                <div class="card bg-light mb-3">
+                    <div class="card-header">Missing Boards Report</div>
+                    <div class="card-body">
+                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                        <form onSubmit={this.markMissingBoards}>
+                        </form>
+                    </div>
+                </div>
             </div>
         );
     }
 }
+// <p class="lead">
+//     <input type="submit" class="btn btn-success" value=""/>
+// </p>

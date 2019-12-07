@@ -204,8 +204,26 @@ adminRouter.get('/peek-database', function(req, res) {
     })
 })
 
+function generateReports(){
+    return new Promise((resolve, reject) => {
+        // open File
+        // intepret data
+        // generate Reports
+        resolve({ historical:["uno"], stationRebalancing: ["dos"], missingBoards:["tres"]})
+    })
+}
+
 adminRouter.get('/generateReports', adminRouteAuth, function(req, res){
-    res.sendStatus(200)
+    generateReports()
+        .then((reports) => {
+            // res.json({data})
+            res.json(reports)
+        })
+        .catch(e => {
+            res.json({
+              error: e.message
+            })
+        })
 })
 
 adminRouter.get('/inventory', adminRouteAuth, function(req,res){
