@@ -40,15 +40,15 @@ CREATE TABLE boards (
     last_transaction_time TIMESTAMP NOT NULL
 );
 
-INSERT INTO authentication(id, username, password, user_type) VALUES (1,'stationmanager','stationmanager','user');
-INSERT INTO authentication(id, username, password, user_type) VALUES (2,'a','a','admin');
+INSERT INTO authentication(id, username, password, user_type) VALUES (1,'stationmanager','$2a$10$GhHLcCQCHJzIUXVOfLD3neu/9UHI3wJGSDc5zHQ382lbm/b5BxKmy','user');
+INSERT INTO authentication(id, username, password, user_type) VALUES (2,'a','$2a$10$GhHLcCQCHJzIUXVOfLD3neu/9UHI3wJGSDc5zHQ382lbm/b5BxKmy','admin');
 
-INSERT INTO authentication(id, username, password, user_type) VALUES (3,'u1','u','user');
-INSERT INTO authentication(id, username, password, user_type) VALUES (4,'u2','u','user');
-INSERT INTO authentication(id, username, password, user_type) VALUES (5,'u3','u','user');
-INSERT INTO authentication(id, username, password, user_type) VALUES (6,'u4','u','user');
-INSERT INTO authentication(id, username, password, user_type) VALUES (7,'u5','u','user');
-INSERT INTO authentication(id, username, password, user_type) VALUES (8,'u6','u','user');
+INSERT INTO authentication(id, username, password, user_type) VALUES (3,'u1','$2a$10$GhHLcCQCHJzIUXVOfLD3neu/9UHI3wJGSDc5zHQ382lbm/b5BxKmy','user');
+INSERT INTO authentication(id, username, password, user_type) VALUES (4,'u2','$2a$10$GhHLcCQCHJzIUXVOfLD3neu/9UHI3wJGSDc5zHQ382lbm/b5BxKmy','user');
+INSERT INTO authentication(id, username, password, user_type) VALUES (5,'u3','$2a$10$GhHLcCQCHJzIUXVOfLD3neu/9UHI3wJGSDc5zHQ382lbm/b5BxKmy','user');
+INSERT INTO authentication(id, username, password, user_type) VALUES (6,'u4','$2a$10$GhHLcCQCHJzIUXVOfLD3neu/9UHI3wJGSDc5zHQ382lbm/b5BxKmy','user');
+INSERT INTO authentication(id, username, password, user_type) VALUES (7,'u5','$2a$10$GhHLcCQCHJzIUXVOfLD3neu/9UHI3wJGSDc5zHQ382lbm/b5BxKmy','user');
+INSERT INTO authentication(id, username, password, user_type) VALUES (8,'u6','$2a$10$GhHLcCQCHJzIUXVOfLD3neu/9UHI3wJGSDc5zHQ382lbm/b5BxKmy','user');
 
 INSERT INTO users(user_id, first_name, last_name, email, phone_number, credit_card)
 VALUES (1, 'stationmanager', 'stationmanager', 'example@example.com', '000000000', '0000 0000 0000 0000');
