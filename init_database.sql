@@ -40,9 +40,9 @@ CREATE TABLE boards (
     last_transaction_time TIMESTAMP NOT NULL
 );
 
-INSERT INTO authentication(id, username, password, user_type) VALUES (1,'stationmanager','password','user');
-INSERT INTO authentication(id, username, password, user_type) VALUES (2,'u','u','user');
-INSERT INTO authentication(id, username, password, user_type) VALUES (3,'a','a','admin');
+INSERT INTO authentication(id, username, password, user_type) VALUES (1,'stationmanager','$2a$10$GhHLcCQCHJzIUXVOfLD3neu/9UHI3wJGSDc5zHQ382lbm/b5BxKmy','user');
+INSERT INTO authentication(id, username, password, user_type) VALUES (2,'u','$2a$10$GhHLcCQCHJzIUXVOfLD3neu/9UHI3wJGSDc5zHQ382lbm/b5BxKmy','user');
+INSERT INTO authentication(id, username, password, user_type) VALUES (3,'a','$2a$10$GhHLcCQCHJzIUXVOfLD3neu/9UHI3wJGSDc5zHQ382lbm/b5BxKmy','admin');
 
 INSERT INTO users(user_id, first_name, last_name, email, phone_number, credit_card)
 VALUES (1, 'stationmanager', 'stationmanager', 'example@example.com', '000000000', '0000 0000 0000 0001');
