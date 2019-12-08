@@ -5,6 +5,7 @@ const adminRouteAuth = require('../middleware/AdminRouteAuth')
 const bcryptHelpers = require('../auxiliary/BcryptHelpers')
 const timestamp = require('time-stamp');
 const fs = require('fs').promises;
+const shell = require('shelljs');
 // const split = require('split');
 
 // Database
@@ -207,8 +208,11 @@ adminRouter.get('/peek-database', function(req, res) {
 function generateReports(){
     return new Promise((resolve, reject) => {
         // open File
-        // intepret data
-        // generate Reports
+        shell.echo('Calling MapReduce Job');
+        // shell.exec(Mapreduce Job)
+        shell.echo('Job Finished, Data ready for reading and interpreting');
+        // read outputted files
+        shell.echo('Data Read in, returning parsed data')
         resolve({ historical:["uno"], stationRebalancing: ["dos"], missingBoards:["tres"]})
     })
 }
