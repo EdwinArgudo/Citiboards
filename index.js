@@ -1,7 +1,6 @@
 const express = require('express')
 const cors = require('cors')
 const { Pool, Client } = require('pg')
-const bcrypt = require('bcrypt')
 const cookieParser = require('cookie-parser')
 const bodyParser = require('body-parser')
 const session = require('express-session')
