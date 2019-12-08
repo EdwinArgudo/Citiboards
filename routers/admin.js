@@ -1,6 +1,6 @@
 const express = require('express')
 const { Pool, Client } = require('pg')
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcryptjs')
 const adminRouteAuth = require('../middleware/AdminRouteAuth')
 const bcryptHelpers = require('../auxiliary/BcryptHelpers')
 const timestamp = require('time-stamp');

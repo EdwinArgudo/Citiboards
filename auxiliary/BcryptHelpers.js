@@ -1,4 +1,4 @@
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcryptjs')
 
 async function hP(p){
     return new Promise((resolve, reject) => {

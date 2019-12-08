@@ -1,6 +1,6 @@
 const express = require('express')
 const { Pool, Client } = require('pg')
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcryptjs')
 const userRouteAuth = require('../middleware/UserRouteAuth')
 const bcryptHelpers = require('../auxiliary/BcryptHelpers')
 
