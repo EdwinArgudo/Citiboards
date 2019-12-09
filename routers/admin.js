@@ -6,6 +6,7 @@ const bcryptHelpers = require('../auxiliary/BcryptHelpers')
 const timestamp = require('time-stamp');
 const fs = require('fs').promises;
 const shell = require('shelljs');
+const STATIONS = require('../data/stations.json')
 // const split = require('split');
 
 // Database
@@ -18,7 +19,40 @@ const pool = new Pool({
   port: process.env.PGPORT,
 })
 
-// File Stream
+// Queue
+
+class Queue {
+    constructor() {
+        this.items = [];
+    }
+
+    isEmpty() {
+        return this.items.length === 0;
+    }
+
+    enqueue(item) {
+        this.items.push(item)
+
+    }
+
+    dequeue() {
+        if(this.isEmpty()) return "Underflow";
+        return this.items.shift();
+    }
+
+    front() {
+        if(this.isEmpty())
+            return "No elements in Queue";
+        return this.items[0];
+    }
+
+    printQueue() {
+        let str = "";
+        for(let i = 0; i < this.items.length; i++)
+            str += this.items[i] +" ";
+        return str;
+    }
+}
 
 // Routing
 
@@ -66,8 +100,6 @@ function moveBoards(obj, generateTime) {
                 date = obj.date
                 _time = obj.time
             }
-            const _timestamp = `${date} ${_time}`
-            console.log(_timestamp)
             let curr_data = null;
 
             try {
@@ -112,16 +144,15 @@ function moveBoards(obj, generateTime) {
 
             console.log("No Obv Errors - Lets Update")
 
-            let columns = "(station_id, user_id, board_status, last_transaction_time)"
-            let quant = "($2, $3, $4, $5)"
-            let fullQueryValues = [obj.boardID, obj.stationID,  obj.userID, obj.boardStatus, date, _time]
-            let updateQueryValues = [obj.boardID, obj.stationID,  obj.userID, obj.boardStatus, _timestamp]
+            let columns = "(station_id, user_id, board_status, last_transaction_date, last_transaction_time)"
+            let quant = "($2, $3, $4, $5, $6)"
+            let updateQueryValues = [obj.boardID, obj.stationID,  obj.userID, obj.boardStatus, date, _time]
             if(beingCheckedOut){
-                fullQueryValues[1] = "*"
+                updateQueryValues[1] = curr_data.rows[0].station_id
             } else {
-                columns = "(user_id, board_status, last_transaction_time)"
-                updateQueryValues = [obj.boardID, obj.userID, obj.boardStatus, _timestamp]
-                quant = "($2, $3, $4)"
+                // columns = "(user_id, board_status, last_transaction_date, last_transaction_time)"
+                // updateQueryValues = [obj.boardID, obj.userID, obj.boardStatus, date, _time]
+                // quant = "($2, $3, $4, $5)"
             }
             console.log(updateQueryValues)
             const updateQuery = `UPDATE boards SET ${columns} = ${quant} WHERE board_id = $1 RETURNING *`
@@ -135,10 +166,10 @@ function moveBoards(obj, generateTime) {
             }
 
             //await transactionalLogStream.write(`${fullQueryValues.join(",")}\n`)
-            console.log(`${fullQueryValues.join(",")}\n`)
+            console.log(`${updateQueryValues.join(",")}\n`)
             //const a = await fs.writeFile('transactionalLogs.txt', "hi", 'utf-8')
             //console.log(a)
-            const transactionalLogStream = await fs.appendFile('./logs/transactionalLogs.csv',`${fullQueryValues.join(",")}\n`)
+            const transactionalLogStream = await fs.appendFile('./data/transactionalLogs.csv',`${updateQueryValues.join(",")}\n`)
             return resolve("did it!");
 
         })().catch(e => {
@@ -154,26 +185,33 @@ adminRouter.post('/station-simulator', adminRouteAuth, function(req, res) {
         .catch(e => res.json({ error: e.message }))
 })
 
-adminRouter.get('/load-random-data', adminRouteAuth, async function (req, res) {
-    let results = await fs.readFile('./logs/randomBoardData.csv','utf8')
-    let contents = results.split("\n")
-    console.log(contents)
-    for(let i = 0; i < contents.length; i++){
-        if(contents[i].length !== 0){
-            let parsedLine = contents[i].split(",")
-            let stationID = parsedLine[1] === "*" ? 1 : parseInt(parsedLine[1])
-            const obj = {
-                boardID: parseInt(parsedLine[0]),
-                stationID: stationID,
-                userID: parseInt(parsedLine[2]),
-                boardStatus: parsedLine[3],
-                date: parsedLine[4],
-                time: parsedLine[5]
-            }
-            await moveBoards(obj, false)
+adminRouter.post('/load-data', adminRouteAuth, async function (req, res) {
+    if(req.body.loadedData){
+        let contents = req.body.loadedData
+        for(let i = 0; i < contents.length; i++){
+            await moveBoards(contents[i], false)
         }
+        res.sendStatus(200)
+    } else {
+        let results = await fs.readFile('./data/randomBoardData.csv','utf8')
+        let contents = results.split("\n")
+        console.log(contents)
+        for(let i = 0; i < contents.length; i++){
+            if(contents[i].length !== 0){
+                let parsedLine = contents[i].split(",")
+                const obj = {
+                    boardID: parseInt(parsedLine[0]),
+                    stationID: parseInt(parsedLine[1]),
+                    userID: parseInt(parsedLine[2]),
+                    boardStatus: parsedLine[3],
+                    date: parsedLine[4],
+                    time: parsedLine[5]
+                }
+                await moveBoards(obj, false)
+            }
+        }
+        res.sendStatus(200)
     }
-    res.sendStatus(200)
 })
 
 adminRouter.get('/peek-database', function(req, res) {
@@ -210,24 +248,194 @@ function generateReports(){
         // open File
         shell.echo('Calling MapReduce Job');
         // shell.exec(Mapreduce Job)
-        shell.echo('Job Finished, Data ready for reading and interpreting');
-        // read outputted files
-        shell.echo('Data Read in, returning parsed data')
-        resolve({ historical:["uno"], stationRebalancing: ["dos"], missingBoards:["tres"]})
+        shell.echo('Job Finished, Data ready');
+        // place outputted files
+        resolve("done")
     })
 }
 
-adminRouter.get('/generateReports', adminRouteAuth, function(req, res){
+adminRouter.get('/generate-reports', adminRouteAuth, function(req, res){
     generateReports()
         .then((reports) => {
-            // res.json({data})
-            res.json(reports)
+            res.sendStatus(200)
         })
         .catch(e => {
             res.json({
               error: e.message
             })
         })
+})
+
+adminRouter.get('/historical-reports/:boardID', adminRouteAuth, function(req, res){
+    const boardID = parseInt(req.params.boardID)
+    // Read Output from MapReduce
+    // s_start = station start
+    let boardData = null;
+    if(boardID === 1){
+        boardData = [
+            {
+                date: "2019-01-01",
+                time: "12:00:00",
+                s_start: 1,
+                s_end: 9,
+                duration: 30
+            },
+            {
+                date: "2019-01-01",
+                time: "13:30:00",
+                s_start: 9,
+                s_end: 5,
+                duration: 15
+            },
+            {
+                date: "2019-01-01",
+                time: "14:00:00",
+                s_start: 5,
+                s_end: 4,
+                duration: 75
+            },
+            {
+                date: "2019-01-01",
+                time: "16:00:00",
+                s_start: 4,
+                s_end: 2,
+                duration: 45
+            },
+            {
+                date: "2019-01-01",
+                time: "17:30:00",
+                s_start: 2,
+                s_end: 7,
+                duration: 15
+            }
+        ]
+    } else if (boardID === 2){
+        boardData = [
+            {
+                date: "2019-01-01",
+                time: "12:00:00",
+                s_start: 2,
+                s_end: 8,
+                duration: 30
+            },
+            {
+                date: "2019-01-01",
+                time: "13:30:00",
+                s_start: 8,
+                s_end: 6,
+                duration: 15
+            },
+            {
+                date: "2019-01-01",
+                time: "14:00:00",
+                s_start: 6,
+                s_end: 3,
+                duration: 75
+            },
+            {
+                date: "2019-01-01",
+                time: "16:00:00",
+                s_start: 3,
+                s_end: 7,
+                duration: 45
+            },
+            {
+                date: "2019-01-01",
+                time: "17:30:00",
+                s_start: 7,
+                s_end: 4,
+                duration: 15
+            }
+        ]
+    } else {
+        boardData = [
+            {
+                date: "2019-01-01",
+                time: "12:00:00",
+                s_start: 1,
+                s_end: 6,
+                duration: 10
+            },
+            {
+                date: "2019-01-01",
+                time: "12:20:00",
+                s_start: 6,
+                s_end: 3,
+                duration: 60
+            },
+            {
+                date: "2019-01-01",
+                time: "15:00:00",
+                s_start: 3,
+                s_end: 2,
+                duration: 10
+            },
+            {
+                date: "2019-01-01",
+                time: "20:00:00",
+                s_start: 2,
+                s_end: 2,
+                duration: 10
+            }
+        ]
+    }
+    res.json({ data: boardData  })
+})
+
+adminRouter.get('/station-rebalancing', adminRouteAuth, function(req,res){
+    (async () => {
+        const client = await pool.connect()
+        let stations_data = []
+        let num_boards = null
+        const num_stations = STATIONS.length
+        try {
+            for(let i = 0; i < num_stations; i++){
+                let per_station = await client.query("SELECT board_id, station_id FROM boards WHERE board_status = 'parked' AND station_id = $1", [i + 1])
+                stations_data.push(per_station.rows)
+            }
+            num_boards = (await client.query("SELECT COUNT(*) FROM boards", [])).rows[0].count
+        } catch (e) {
+            throw new Error("Database Error")
+        } finally {
+            client.release()
+        }
+
+        const avg = Math.floor(num_boards / num_stations)
+        const queue = new Queue()
+        const changes = []
+
+        for(let i = 0; i < num_stations; i++){
+            let possess = stations_data[i].length
+            if(possess > avg){
+                let contribute = possess - avg
+                for(let j = 0; j < contribute; j++){
+                    queue.enqueue(stations_data[i][j])
+                }
+            }
+        }
+
+        for(let i = 0; i < num_stations; i++){
+            let possess = stations_data[i].length
+            if(possess < avg){
+                let contribute = avg - possess
+                for(let j = 0; j < contribute; j++){
+                    let board = queue.front()
+                    board['new_station_id'] = i + 1
+                    changes.push(board)
+                    queue.dequeue()
+                }
+            }
+
+        }
+        res.json({
+            rebalancing_data: changes
+        });
+
+    })().catch(e => {
+        res.json({
+          error: e.message
+        })
+    })
 })
 
 adminRouter.get('/inventory', adminRouteAuth, function(req,res){
@@ -261,3 +469,5 @@ adminRouter.get('/logout',function(req,res){
 })
 
 module.exports = adminRouter;
+
+//SELECT board_id FROM boards WHERE board_status = 'parked' GROUP BY station_id

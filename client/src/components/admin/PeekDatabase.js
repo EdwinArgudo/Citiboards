@@ -88,6 +88,7 @@ export default class PeekDatabase extends Component {
                 <td>{row.station_id}</td>
                 <td>{row.user_id}</td>
                 <td>{row.board_status}</td>
+                <td>{row.last_transaction_date}</td>
                 <td>{row.last_transaction_time}</td>
             </tr>
         );
@@ -149,6 +150,7 @@ export default class PeekDatabase extends Component {
                                     <th scope="col">Station ID</th>
                                     <th scope="col">User ID</th>
                                     <th scope="col">Board Status</th>
+                                    <th scope="col">Last Transaction Date</th>
                                     <th scope="col">Last Transaction Time</th>
                                 </tr>
                             </thead>
