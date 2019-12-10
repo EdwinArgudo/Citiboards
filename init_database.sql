@@ -37,7 +37,8 @@ CREATE TABLE boards (
     station_id INT REFERENCES stations(station_id) NOT NULL,
     user_id INT REFERENCES users(user_id) NOT NULL,
     board_status use_status NOT NULL,
-    last_transaction_time TIMESTAMP NOT NULL
+    last_transaction_date TEXT NOT NULL,
+    last_transaction_time TEXT NOT NULL
 );
 
 INSERT INTO authentication(id, username, password, user_type) VALUES (1,'stationmanager','$2a$10$GhHLcCQCHJzIUXVOfLD3neu/9UHI3wJGSDc5zHQ382lbm/b5BxKmy','user');
@@ -68,33 +69,96 @@ VALUES (8, 'sample', 'sample', 'sample6@sample.com', '800888886', '0000 0000 000
 
 INSERT INTO stations(station_id, location, capacity) VALUES (1, 'Central Park', 20);
 INSERT INTO stations(station_id, location, capacity) VALUES (2, 'Washington Square Park', 25);
-INSERT INTO stations(station_id, location, capacity) VALUES (3, 'Oculus', 15);
+INSERT INTO stations(station_id, location, capacity) VALUES (3, 'Oculus - World Trade Center Station', 15);
 INSERT INTO stations(station_id, location, capacity) VALUES (4, 'Rockefeller Center', 20);
 INSERT INTO stations(station_id, location, capacity) VALUES (5, 'Columbus Circle', 25);
 INSERT INTO stations(station_id, location, capacity) VALUES (6, 'Brooklyn Bridge', 15);
+INSERT INTO stations(station_id, location, capacity) VALUES (7, 'Hudson Yards', 15);
+INSERT INTO stations(station_id, location, capacity) VALUES (8, 'Williamsburg Bridge', 20);
+INSERT INTO stations(station_id, location, capacity) VALUES (9, 'Queensboro Bridge', 25);
+INSERT INTO stations(station_id, location, capacity) VALUES (10, 'Gantry Plaza State Park', 15);
 
 
-INSERT INTO boards(board_id, station_id, user_id, board_status, last_transaction_time)
-VALUES (1, 1, 1, 'parked', '1999-01-08 00:00:01');
-INSERT INTO boards(board_id, station_id, user_id, board_status, last_transaction_time)
-VALUES (2, 2, 1, 'parked', '1999-01-08 00:00:01');
-INSERT INTO boards(board_id, station_id, user_id, board_status, last_transaction_time)
-VALUES (3, 3, 1, 'parked', '1999-01-08 00:00:01');
-INSERT INTO boards(board_id, station_id, user_id, board_status, last_transaction_time)
-VALUES (4, 4, 1, 'parked', '1999-01-08 00:00:01');
-INSERT INTO boards(board_id, station_id, user_id, board_status, last_transaction_time)
-VALUES (5, 5, 1, 'parked', '1999-01-08 00:00:01');
-INSERT INTO boards(board_id, station_id, user_id, board_status, last_transaction_time)
-VALUES (6, 6, 1, 'parked', '1999-01-08 00:00:01');
-INSERT INTO boards(board_id, station_id, user_id, board_status, last_transaction_time)
-VALUES (7, 1, 1, 'parked', '1999-01-08 00:00:01');
-INSERT INTO boards(board_id, station_id, user_id, board_status, last_transaction_time)
-VALUES (8, 2, 1, 'parked', '1999-01-08 00:00:01');
-INSERT INTO boards(board_id, station_id, user_id, board_status, last_transaction_time)
-VALUES (9, 3, 1, 'parked', '1999-01-08 00:00:01');
-INSERT INTO boards(board_id, station_id, user_id, board_status, last_transaction_time)
-VALUES (10, 4, 1, 'parked', '1999-01-08 00:00:01');
-INSERT INTO boards(board_id, station_id, user_id, board_status, last_transaction_time)
-VALUES (11, 5, 1, 'parked', '1999-01-08 00:00:01');
-INSERT INTO boards(board_id, station_id, user_id, board_status, last_transaction_time)
-VALUES (12, 6, 1, 'parked', '1999-01-08 00:00:01');
+INSERT INTO boards(board_id, station_id, user_id, board_status, last_transaction_date, last_transaction_time)
+VALUES (1, 1, 1, 'parked', '2019-01-01', '00:00:00');
+INSERT INTO boards(board_id, station_id, user_id, board_status, last_transaction_date, last_transaction_time)
+VALUES (2, 2, 1, 'parked', '2019-01-01', '00:00:00');
+INSERT INTO boards(board_id, station_id, user_id, board_status, last_transaction_date, last_transaction_time)
+VALUES (3, 3, 1, 'parked', '2019-01-01', '00:00:00');
+INSERT INTO boards(board_id, station_id, user_id, board_status, last_transaction_date, last_transaction_time)
+VALUES (4, 4, 1, 'parked', '2019-01-01', '00:00:00');
+INSERT INTO boards(board_id, station_id, user_id, board_status, last_transaction_date, last_transaction_time)
+VALUES (5, 5, 1, 'parked', '2019-01-01', '00:00:00');
+INSERT INTO boards(board_id, station_id, user_id, board_status, last_transaction_date, last_transaction_time)
+VALUES (6, 6, 1, 'parked', '2019-01-01', '00:00:00');
+INSERT INTO boards(board_id, station_id, user_id, board_status, last_transaction_date, last_transaction_time)
+VALUES (7, 7, 1, 'parked', '2019-01-01', '00:00:00');
+INSERT INTO boards(board_id, station_id, user_id, board_status, last_transaction_date, last_transaction_time)
+VALUES (8, 8, 1, 'parked', '2019-01-01', '00:00:00');
+INSERT INTO boards(board_id, station_id, user_id, board_status, last_transaction_date, last_transaction_time)
+VALUES (9, 9, 1, 'parked', '2019-01-01', '00:00:00');
+INSERT INTO boards(board_id, station_id, user_id, board_status, last_transaction_date, last_transaction_time)
+VALUES (10, 10, 1, 'parked', '2019-01-01', '00:00:00');
+INSERT INTO boards(board_id, station_id, user_id, board_status, last_transaction_date, last_transaction_time)
+VALUES (11, 1, 1, 'parked', '2019-01-01', '00:00:00');
+INSERT INTO boards(board_id, station_id, user_id, board_status, last_transaction_date, last_transaction_time)
+VALUES (12, 2, 1, 'parked', '2019-01-01', '00:00:00');
+
+INSERT INTO boards(board_id, station_id, user_id, board_status, last_transaction_date, last_transaction_time)
+VALUES (13, 3, 1, 'parked', '2019-01-01', '00:00:00');
+INSERT INTO boards(board_id, station_id, user_id, board_status, last_transaction_date, last_transaction_time)
+VALUES (14, 4, 1, 'parked', '2019-01-01', '00:00:00');
+INSERT INTO boards(board_id, station_id, user_id, board_status, last_transaction_date, last_transaction_time)
+VALUES (15, 5, 1, 'parked', '2019-01-01', '00:00:00');
+INSERT INTO boards(board_id, station_id, user_id, board_status, last_transaction_date, last_transaction_time)
+VALUES (16, 6, 1, 'parked', '2019-01-01', '00:00:00');
+INSERT INTO boards(board_id, station_id, user_id, board_status, last_transaction_date, last_transaction_time)
+VALUES (17, 7, 1, 'parked', '2019-01-01', '00:00:00');
+INSERT INTO boards(board_id, station_id, user_id, board_status, last_transaction_date, last_transaction_time)
+VALUES (18, 8, 1, 'parked', '2019-01-01', '00:00:00');
+INSERT INTO boards(board_id, station_id, user_id, board_status, last_transaction_date, last_transaction_time)
+VALUES (19, 9, 1, 'parked', '2019-01-01', '00:00:00');
+INSERT INTO boards(board_id, station_id, user_id, board_status, last_transaction_date, last_transaction_time)
+VALUES (20, 10, 1, 'parked', '2019-01-01', '00:00:00');
+INSERT INTO boards(board_id, station_id, user_id, board_status, last_transaction_date, last_transaction_time)
+VALUES (21, 1, 1, 'parked', '2019-01-01', '00:00:00');
+INSERT INTO boards(board_id, station_id, user_id, board_status, last_transaction_date, last_transaction_time)
+VALUES (22, 2, 1, 'parked', '2019-01-01', '00:00:00');
+INSERT INTO boards(board_id, station_id, user_id, board_status, last_transaction_date, last_transaction_time)
+VALUES (23, 3, 1, 'parked', '2019-01-01', '00:00:00');
+INSERT INTO boards(board_id, station_id, user_id, board_status, last_transaction_date, last_transaction_time)
+VALUES (24, 4, 1, 'parked', '2019-01-01', '00:00:00');
+
+INSERT INTO boards(board_id, station_id, user_id, board_status, last_transaction_date, last_transaction_time)
+VALUES (25, 5, 1, 'parked', '2019-01-01', '00:00:00');
+INSERT INTO boards(board_id, station_id, user_id, board_status, last_transaction_date, last_transaction_time)
+VALUES (26, 6, 1, 'parked', '2019-01-01', '00:00:00');
+INSERT INTO boards(board_id, station_id, user_id, board_status, last_transaction_date, last_transaction_time)
+VALUES (27, 7, 1, 'parked', '2019-01-01', '00:00:00');
+INSERT INTO boards(board_id, station_id, user_id, board_status, last_transaction_date, last_transaction_time)
+VALUES (28, 8, 1, 'parked', '2019-01-01', '00:00:00');
+INSERT INTO boards(board_id, station_id, user_id, board_status, last_transaction_date, last_transaction_time)
+VALUES (29, 9, 1, 'parked', '2019-01-01', '00:00:00');
+INSERT INTO boards(board_id, station_id, user_id, board_status, last_transaction_date, last_transaction_time)
+VALUES (30, 10, 1, 'parked', '2019-01-01', '00:00:00');
+INSERT INTO boards(board_id, station_id, user_id, board_status, last_transaction_date, last_transaction_time)
+VALUES (31, 1, 1, 'parked', '2019-01-01', '00:00:00');
+INSERT INTO boards(board_id, station_id, user_id, board_status, last_transaction_date, last_transaction_time)
+VALUES (32, 2, 1, 'parked', '2019-01-01', '00:00:00');
+INSERT INTO boards(board_id, station_id, user_id, board_status, last_transaction_date, last_transaction_time)
+VALUES (33, 3, 1, 'parked', '2019-01-01', '00:00:00');
+INSERT INTO boards(board_id, station_id, user_id, board_status, last_transaction_date, last_transaction_time)
+VALUES (34, 4, 1, 'parked', '2019-01-01', '00:00:00');
+INSERT INTO boards(board_id, station_id, user_id, board_status, last_transaction_date, last_transaction_time)
+VALUES (35, 5, 1, 'parked', '2019-01-01', '00:00:00');
+INSERT INTO boards(board_id, station_id, user_id, board_status, last_transaction_date, last_transaction_time)
+VALUES (36, 6, 1, 'parked', '2019-01-01', '00:00:00');
+
+INSERT INTO boards(board_id, station_id, user_id, board_status, last_transaction_date, last_transaction_time)
+VALUES (37, 7, 1, 'parked', '2019-01-01', '00:00:00');
+INSERT INTO boards(board_id, station_id, user_id, board_status, last_transaction_date, last_transaction_time)
+VALUES (38, 8, 1, 'parked', '2019-01-01', '00:00:00');
+INSERT INTO boards(board_id, station_id, user_id, board_status, last_transaction_date, last_transaction_time)
+VALUES (39, 9, 1, 'parked', '2019-01-01', '00:00:00');
+INSERT INTO boards(board_id, station_id, user_id, board_status, last_transaction_date, last_transaction_time)
+VALUES (40, 10, 1, 'parked', '2019-01-01', '00:00:00');

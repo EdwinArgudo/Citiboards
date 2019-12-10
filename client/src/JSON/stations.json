@@ -1,0 +1,12 @@
+[
+  {"site": "Central Park" ,"city":"New York","image":"https://upload.wikimedia.org/wikipedia/commons/1/13/Central_Park_-_The_Pond_%2848377220157%29.jpg","latitude":40.7829,"longitude":-73.9654},
+  {"site": "Washington Square Park" ,"city":"New York","image":"https://upload.wikimedia.org/wikipedia/commons/a/a2/20140526-WashingtonArch_SouthFace_Night.jpg","latitude":40.7308,"longitude":-73.9973},
+  {"site": "Oculus - World Trade Center Station" ,"city":"New York","image":"https://upload.wikimedia.org/wikipedia/commons/b/b2/Oculus_World_Trade_Center_-_August_18_2016.jpg","latitude":40.7126,"longitude":-74.0099},
+  {"site": "Rockefeller Center" ,"city":"New York","image":"https://upload.wikimedia.org/wikipedia/commons/4/41/Rockefeller-ice.jpg","latitude":40.7587,"longitude":-73.9787},
+  {"site": "Columbus Circle" ,"city":"New York","image":"https://wp.zillowstatic.com/streeteasy/2/GettyImages-731852029-1-c83147.jpg","latitude":40.7675,"longitude":-73.9819},
+  {"site": "Brooklyn Bridge" ,"city":"New York","image":"https://upload.wikimedia.org/wikipedia/commons/f/f0/Brooklyn_Bridge_Postdlf.jpg","latitude":40.7061,"longitude":-73.9969},
+  {"site": "Hudson Yards" ,"city":"New York","image":"https://upload.wikimedia.org/wikipedia/commons/f/f6/Hudson_Yards_Plaza_March_2019_53.jpg","latitude":40.7561,"longitude":-74.0035},
+  {"site": "Williamsburg Bridge" ,"city":"New York","image":"https://upload.wikimedia.org/wikipedia/commons/e/e9/Above_Williamsburg_Bridge_crop.jpg","latitude":40.7136,"longitude":-73.9724},
+  {"site": "Queensboro Bridge" ,"city":"New York","image":"https://upload.wikimedia.org/wikipedia/commons/8/83/Queensboro_Bridge_from_Manhattan_side.jpg","latitude":40.7530,"longitude":-73.9470},
+  {"site": "Gantry Plaza State Park" ,"city":"New York","image":"https://qns.com/wp-content/uploads/2015/11/Gantry_Plaza_State_Park_Long_Island_City_01_9431668991-NEW11.jpg","latitude":40.7455,"longitude":-73.9550}
+]

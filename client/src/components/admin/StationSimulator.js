@@ -99,7 +99,7 @@ export default class StationSimulator extends Component {
             message: "Loading...",
             alert: 'good'
         });
-        axios.get('/api/v1/admin/load-random-data')
+        axios.post('/api/v1/admin/load-data')
             .then(res => {
                 this.getInventoryData()
                 console.log(res)

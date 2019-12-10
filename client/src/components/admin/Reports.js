@@ -2,6 +2,9 @@ import React, { Component } from 'react'
 import { BrowserRouter, Link, Route, Switch, Redirect } from 'react-router-dom';
 import axios from 'axios'
 import StationSimulator from './StationSimulator'
+import HistoricalReport from './HistoricalReport'
+import StationRebalancing from './StationRebalancing'
+import MissingBoards from './MissingBoards'
 
 export default class Reports extends Component {
     constructor() {
@@ -12,7 +15,8 @@ export default class Reports extends Component {
             historical:[],
             stationRebalancing: [],
             missingBoards:[],
-            HRboardID: ''
+            HRboardID: '',
+            HRboardID_submit: ''
         }
     }
     componentDidMount() {
@@ -28,7 +32,7 @@ export default class Reports extends Component {
 
     generateReports = (event) => {
         event.preventDefault();
-        axios.get('/api/v1/admin/generateReports')
+        axios.get('/api/v1/admin/generate-reports')
         .then(res => {
             console.log(res)
             if (res['data']['error']) {
@@ -41,10 +45,7 @@ export default class Reports extends Component {
             } else {
                 this.setState({
                     message: "Reports Generated!",
-                    alert: 'good',
-                    historical: res.historical,
-                    stationRebalancing: res.stationRebalancing,
-                    missingBoards: res.missingBoards
+                    alert: 'good'
                 })
             }
         })
@@ -58,6 +59,13 @@ export default class Reports extends Component {
         });
     }
 
+    getHistoricalReport = (event) => {
+        event.preventDefault();
+        this.setState({
+            HRboardID_submit: this.state.HRboardID
+        })
+    }
+
     render() {
         let message = ""
         if(this.state.message !== ""){
@@ -69,6 +77,8 @@ export default class Reports extends Component {
                 </div>
             )
         }
+
+        let historicalReport = this.state.HRboardID_submit !== '' ? <HistoricalReport boardID={this.state.HRboardID_submit}/> : null
         return (
             <div class="container-fluid mt-3 mb-3">
                 <h1 class="display-5">Reports</h1>
@@ -96,26 +106,20 @@ export default class Reports extends Component {
                                 <input type="submit" class="btn btn-info" value="Get Historical Report"/>
                             </p>
                         </form>
-                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                        <hr class="my-4"/>
+                        {historicalReport}
                     </div>
                 </div>
                 <div class="card bg-light mb-3">
                     <div class="card-header">Station Rebalancing Report</div>
                     <div class="card-body">
-                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                        <form onSubmit={this.rebalanceStations}>
-                            <p class="lead">
-                                <input type="submit" class="btn btn-info" value="Rebalance Stations"/>
-                            </p>
-                        </form>
+                        <StationRebalancing />
                     </div>
                 </div>
                 <div class="card bg-light mb-3">
                     <div class="card-header">Missing Boards Report</div>
                     <div class="card-body">
-                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                        <form onSubmit={this.markMissingBoards}>
-                        </form>
+                        <MissingBoards />
                     </div>
                 </div>
             </div>
