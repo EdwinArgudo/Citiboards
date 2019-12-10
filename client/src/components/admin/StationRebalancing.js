@@ -5,7 +5,9 @@ export default class StationRebalancing extends Component {
     constructor(props){
         super(props)
         this.state = {
-            rebalancing_data: []
+            rebalancing_data: [],
+            message: '',
+            alert: ''
         }
     }
 
@@ -21,6 +23,10 @@ export default class StationRebalancing extends Component {
         .then(res => {
             console.log(res)
             if (res['data']['error']) {
+                this.setState({
+                    message: 'Err!',
+                    alert: 'bad'
+                })
                 const error = new Error(res['data']['error']);
                 throw error;
             } else {
@@ -36,6 +42,32 @@ export default class StationRebalancing extends Component {
 
     submitReport = (event) => {
         event.preventDefault();
+        axios.post('/api/v1/admin/load-data', {
+            loadedData: this.state.rebalancing_data
+        })
+        .then(res => {
+            console.log(res)
+            if (res['data']['error']) {
+                this.setState({
+                    message: 'Err!',
+                    alert: 'bad'
+                })
+                const error = new Error(res['data']['error']);
+                throw error;
+            } else {
+                this.setState({
+                    message: 'Rebalanced!',
+                    alert: 'good'
+                })
+            }
+        })
+        .catch(err => {
+            this.setState({
+                message: 'Err!',
+                alert: 'bad'
+            })
+            console.error(err);
+        });
     }
 
     render() {
@@ -63,8 +95,20 @@ export default class StationRebalancing extends Component {
                 </form>
             )
         }
+
+        let message = ""
+        if(this.state.message !== ""){
+            message = (
+                 <div class={`alert alert-dismissible alert-${ this.state.alert === "good" ? "success" : "warning"}`}>
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    <h4 class="alert-heading">{ this.state.alert === "good" ? "Success!" : "Error!"}</h4>
+                    <p class="mb-0"> { this.state.message }</p>
+                </div>
+            )
+        }
         return (
             <div class="container-fluid mt-3 mb-3">
+                { message }
                 <form onSubmit={this.getReport}>
                     <p class="lead">
                         <input type="submit" class="btn btn-info" value="Update Station Rebalancing Report"/>

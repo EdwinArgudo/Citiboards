@@ -7,7 +7,7 @@ const timestamp = require('time-stamp');
 const fs = require('fs').promises;
 const shell = require('shelljs');
 const STATIONS = require('../data/stations.json')
-// const split = require('split');
+const moment = require('moment');
 
 // Database
 
@@ -189,7 +189,20 @@ adminRouter.post('/load-data', adminRouteAuth, async function (req, res) {
     if(req.body.loadedData){
         let contents = req.body.loadedData
         for(let i = 0; i < contents.length; i++){
-            await moveBoards(contents[i], false)
+            let obj = {
+                boardID: contents[i].board_id,
+                stationID: contents[i].station_id,
+                userID: 1,
+                boardStatus: "in_use",
+            }
+            await moveBoards(obj, true)
+            obj = {
+                boardID: contents[i].board_id,
+                stationID: contents[i].new_station_id,
+                userID: 1,
+                boardStatus: "parked",
+            }
+            await moveBoards(obj, true)
         }
         res.sendStatus(200)
     } else {
@@ -419,16 +432,55 @@ adminRouter.get('/station-rebalancing', adminRouteAuth, function(req,res){
             if(possess < avg){
                 let contribute = avg - possess
                 for(let j = 0; j < contribute; j++){
-                    let board = queue.front()
-                    board['new_station_id'] = i + 1
-                    changes.push(board)
-                    queue.dequeue()
+                    if(!queue.isEmpty()){
+                        let board = queue.front()
+                        board['new_station_id'] = i + 1
+                        changes.push(board)
+                        queue.dequeue()
+                    }
                 }
             }
 
         }
+
+        console.log(changes)
         res.json({
             rebalancing_data: changes
+        });
+
+    })().catch(e => {
+        res.json({
+          error: e.message
+        })
+    })
+})
+
+adminRouter.get('/missing-boards', adminRouteAuth, function(req, res){
+    (async () => {
+        const client = await pool.connect()
+        let board_data = null
+        try {
+            board_data = await client.query("SELECT * FROM boards WHERE board_status = 'in_use'", [])
+        } catch (e) {
+            throw new Error("Database Error")
+        } finally {
+            client.release()
+        }
+
+        const in_use_boards = board_data.rows
+        const missing_boards = []
+        for(let i = 0; i < in_use_boards.length; i++){
+            const timestamp = moment(`${in_use_boards[i].last_transaction_date} ${in_use_boards[i].last_transaction_time}`)
+            const now = moment()
+
+            if(now.diff(timestamp, 'days') > 7){
+                missing_boards.push(in_use_boards[i])
+            }
+        }
+        console.log(missing_boards)
+
+        res.json({
+            missing_boards
         });
 
     })().catch(e => {
@@ -469,5 +521,3 @@ adminRouter.get('/logout',function(req,res){
 })
 
 module.exports = adminRouter;
-
-//SELECT board_id FROM boards WHERE board_status = 'parked' GROUP BY station_id
