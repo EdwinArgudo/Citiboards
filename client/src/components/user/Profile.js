@@ -32,7 +32,6 @@ export default class Profile extends Component {
     render() {
         return (
             <div class="jumbotron">
-                <h1 class="display-3">User Profile</h1>
                     <div class="form-group">
                     <fieldset>
                         <label class="control-label" for="readOnlyInput">Username</label>

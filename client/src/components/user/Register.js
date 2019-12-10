@@ -47,7 +47,7 @@ export default class Register extends Component {
     }
     render() {
         if(this.state.redirect){
-            return ( <Redirect to="/profile"/> );
+            return ( <Redirect to="/user-home"/> );
         }
         return (
             <div class="jumbotron">

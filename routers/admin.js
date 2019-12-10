@@ -279,120 +279,166 @@ adminRouter.get('/generate-reports', adminRouteAuth, function(req, res){
         })
 })
 
-adminRouter.get('/historical-reports/:boardID', adminRouteAuth, function(req, res){
+adminRouter.get('/historical-reports/:boardID', adminRouteAuth, async function(req, res){
     const boardID = parseInt(req.params.boardID)
+    let transactions = await fs.readFile('./data/transactionalLogs.csv','utf8')
+    let contents = transactions.split("\n")
+    console.log(contents)
+    let specific = []
+    for(let i = 0; i < contents.length; i++){
+        if(contents[i].length !== 0){
+            let parsedLine = contents[i].split(",")
+            console.log(parseInt(parsedLine[0]),boardID)
+            if(parseInt(parsedLine[0]) === boardID){
+                const obj = {
+                    stationID: parseInt(parsedLine[1]),
+                    boardStatus: parsedLine[3],
+                    date: parsedLine[4],
+                    time: parsedLine[5]
+                }
+                specific.push(obj)
+            }
+        }
+    }
+
+    console.log(specific)
+
+    let boardData = [];
+
+    for(let i = 0; i < specific.length; i++){
+        let curr = specific[i]
+        if(curr.boardStatus === 'parked' && i != 0){
+            let in_use = specific[i - 1]
+            let parked_timestamp = moment(`${curr.date} ${curr.time}`)
+            let in_use_timestamp = moment(`${in_use.date} ${in_use.time}`)
+            let time_difference = parked_timestamp.diff(in_use_timestamp, 'minutes')
+            let move = {
+                date: in_use.date,
+                time: in_use.time,
+                s_start: in_use.stationID,
+                s_end: curr.stationID,
+                duration: time_difference
+            }
+            boardData.push(move)
+        }
+
+    }
+    console.log(boardData)
+    res.json({ data: boardData })
+
+
     // Read Output from MapReduce
     // s_start = station start
-    let boardData = null;
-    if(boardID === 1){
-        boardData = [
-            {
-                date: "2019-01-01",
-                time: "12:00:00",
-                s_start: 1,
-                s_end: 9,
-                duration: 30
-            },
-            {
-                date: "2019-01-01",
-                time: "13:30:00",
-                s_start: 9,
-                s_end: 5,
-                duration: 15
-            },
-            {
-                date: "2019-01-01",
-                time: "14:00:00",
-                s_start: 5,
-                s_end: 4,
-                duration: 75
-            },
-            {
-                date: "2019-01-01",
-                time: "16:00:00",
-                s_start: 4,
-                s_end: 2,
-                duration: 45
-            },
-            {
-                date: "2019-01-01",
-                time: "17:30:00",
-                s_start: 2,
-                s_end: 7,
-                duration: 15
-            }
-        ]
-    } else if (boardID === 2){
-        boardData = [
-            {
-                date: "2019-01-01",
-                time: "12:00:00",
-                s_start: 2,
-                s_end: 8,
-                duration: 30
-            },
-            {
-                date: "2019-01-01",
-                time: "13:30:00",
-                s_start: 8,
-                s_end: 6,
-                duration: 15
-            },
-            {
-                date: "2019-01-01",
-                time: "14:00:00",
-                s_start: 6,
-                s_end: 3,
-                duration: 75
-            },
-            {
-                date: "2019-01-01",
-                time: "16:00:00",
-                s_start: 3,
-                s_end: 7,
-                duration: 45
-            },
-            {
-                date: "2019-01-01",
-                time: "17:30:00",
-                s_start: 7,
-                s_end: 4,
-                duration: 15
-            }
-        ]
-    } else {
-        boardData = [
-            {
-                date: "2019-01-01",
-                time: "12:00:00",
-                s_start: 1,
-                s_end: 6,
-                duration: 10
-            },
-            {
-                date: "2019-01-01",
-                time: "12:20:00",
-                s_start: 6,
-                s_end: 3,
-                duration: 60
-            },
-            {
-                date: "2019-01-01",
-                time: "15:00:00",
-                s_start: 3,
-                s_end: 2,
-                duration: 10
-            },
-            {
-                date: "2019-01-01",
-                time: "20:00:00",
-                s_start: 2,
-                s_end: 2,
-                duration: 10
-            }
-        ]
-    }
-    res.json({ data: boardData  })
+    // let boardData = null;
+    // if(boardID === 1){
+    //     boardData = [
+    //         {
+    //             date: "2019-01-01",
+    //             time: "12:00:00",
+    //             s_start: 1,
+    //             s_end: 9,
+    //             duration: 30
+    //         },
+    //         {
+    //             date: "2019-01-01",
+    //             time: "13:30:00",
+    //             s_start: 9,
+    //             s_end: 5,
+    //             duration: 15
+    //         },
+    //         {
+    //             date: "2019-01-01",
+    //             time: "14:00:00",
+    //             s_start: 5,
+    //             s_end: 4,
+    //             duration: 75
+    //         },
+    //         {
+    //             date: "2019-01-01",
+    //             time: "16:00:00",
+    //             s_start: 4,
+    //             s_end: 2,
+    //             duration: 45
+    //         },
+    //         {
+    //             date: "2019-01-01",
+    //             time: "17:30:00",
+    //             s_start: 2,
+    //             s_end: 7,
+    //             duration: 15
+    //         }
+    //     ]
+    // } else if (boardID === 2){
+    //     boardData = [
+    //         {
+    //             date: "2019-01-01",
+    //             time: "12:00:00",
+    //             s_start: 2,
+    //             s_end: 8,
+    //             duration: 30
+    //         },
+    //         {
+    //             date: "2019-01-01",
+    //             time: "13:30:00",
+    //             s_start: 8,
+    //             s_end: 6,
+    //             duration: 15
+    //         },
+    //         {
+    //             date: "2019-01-01",
+    //             time: "14:00:00",
+    //             s_start: 6,
+    //             s_end: 3,
+    //             duration: 75
+    //         },
+    //         {
+    //             date: "2019-01-01",
+    //             time: "16:00:00",
+    //             s_start: 3,
+    //             s_end: 7,
+    //             duration: 45
+    //         },
+    //         {
+    //             date: "2019-01-01",
+    //             time: "17:30:00",
+    //             s_start: 7,
+    //             s_end: 4,
+    //             duration: 15
+    //         }
+    //     ]
+    // } else {
+    //     boardData = [
+    //         {
+    //             date: "2019-01-01",
+    //             time: "12:00:00",
+    //             s_start: 1,
+    //             s_end: 6,
+    //             duration: 10
+    //         },
+    //         {
+    //             date: "2019-01-01",
+    //             time: "12:20:00",
+    //             s_start: 6,
+    //             s_end: 3,
+    //             duration: 60
+    //         },
+    //         {
+    //             date: "2019-01-01",
+    //             time: "15:00:00",
+    //             s_start: 3,
+    //             s_end: 2,
+    //             duration: 10
+    //         },
+    //         {
+    //             date: "2019-01-01",
+    //             time: "20:00:00",
+    //             s_start: 2,
+    //             s_end: 2,
+    //             duration: 10
+    //         }
+    //     ]
+    // }
+    // res.json({ data: boardData  })
 })
 
 adminRouter.get('/station-rebalancing', adminRouteAuth, function(req,res){
@@ -495,7 +541,7 @@ adminRouter.get('/inventory', adminRouteAuth, function(req,res){
         const client = await pool.connect()
         let stations_data = null
         try {
-            stations_data = await client.query("SELECT station_id, COUNT(*) FROM boards WHERE board_status = 'parked' GROUP BY station_id", [])
+            stations_data = await client.query("SELECT station_id, COUNT(*) FROM boards WHERE board_status = 'parked' GROUP BY station_id ORDER BY station_id", [])
         } catch (e) {
             throw new Error("Database Error")
         } finally {

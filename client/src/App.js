@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { BrowserRouter, Link, Route, Switch, Redirect } from 'react-router-dom';
 import { withRouter } from "react-router";
 import Home from './components/user/Home';
-import Profile from './components/user/Profile';
+import UserHome from './components/user/UserHome';
 import Login from './components/user/Login';
 import Register from './components/user/Register';
 import withAuth from './components/user/withAuth';
@@ -12,8 +12,6 @@ import AdminApp from './AdminApp';
 
 export default class App extends Component {
     render() {
-        const AuthProfile = withAuth(Profile)
-        const AuthLogout = withAuth(LogOut)
         return (
             <BrowserRouter>
                 <Switch>
@@ -21,7 +19,7 @@ export default class App extends Component {
                         <Nav />
                         <Home />
                     </Route>
-                    <Route path="/login" component={Login} >
+                    <Route path="/login">
                         <Nav />
                         <Login />
                     </Route>
@@ -29,14 +27,7 @@ export default class App extends Component {
                         <Nav />
                         <Register />
                     </Route>
-                    <Route path="/profile" >
-                        <Nav />
-                        < AuthProfile />
-                    </Route>
-                    <Route path="/logout">
-                        <Nav/>
-                        < AuthLogout />
-                    </Route>
+                    <Route path="/user-home" component={withAuth(UserHome)} />
                     <Route path="/admin" component={AdminApp} />
                 </Switch>
             </BrowserRouter>

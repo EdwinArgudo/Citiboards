@@ -18,9 +18,9 @@ export default class ControlPanel extends PureComponent {
                 return (
                     <div>
                         <p>
-                            <b>{`Board ${entry['board_id']}:`}</b>
+                            <b>{`Board ${entry['board_id']}: Checked Out By UserID: ${entry['user_id']}`}</b>
                             <br />
-                            {`Last Seen at ${STATIONS[pos]['site']}`}
+                            {`Last Seen at ${STATIONS[pos]['site']} `}
                             <br />
                             {`On ${entry['last_transaction_date']}, ${entry['last_transaction_time']}`}
                         </p>

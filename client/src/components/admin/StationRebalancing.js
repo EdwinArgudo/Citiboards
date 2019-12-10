@@ -59,6 +59,7 @@ export default class StationRebalancing extends Component {
                     message: 'Rebalanced!',
                     alert: 'good'
                 })
+                this.getReport(null)
             }
         })
         .catch(err => {
