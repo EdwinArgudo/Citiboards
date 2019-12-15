@@ -200,6 +200,19 @@ function moveBoards(obj, generateTime) {
                 client.release()
             }
 
+            try {
+                if(obj.boardStatus === 'in_use'){
+                    let user_data = await client.query("SELECT COUNT(*) FROM boards WHERE board_status = 'in_use' AND user_id = $1", [obj.userID])
+                    if(user_data.rows[0].count > 0){
+                        throw "error!"
+                    }
+                }
+
+            } catch(e) {
+                throw new Error("Please return board before checking out a new one")
+                client.release()
+            }
+
             //console.log(curr_data)
 
             const beingCheckedOut = (obj.boardStatus === "in_use")
