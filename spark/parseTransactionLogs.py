@@ -69,10 +69,3 @@ def printData(brd_usr_grp):
 
 brd_usr_grps = brd_grps.mapValues(groupUsers)
 brd_usr_grps.foreach(printData)
-
-
-#print(logFile.collect())
-#print([array for array in lineAsArr.collect()])
-#print([b_d for b_d in board_data.collect()])
-#for brd_grp in brd_grps.collect():
-#    print(brd_grp)
