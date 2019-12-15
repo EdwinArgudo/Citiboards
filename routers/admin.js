@@ -185,6 +185,8 @@ adminRouter.post('/station-simulator', adminRouteAuth, function(req, res) {
         .catch(e => res.json({ error: e.message }))
 })
 
+let loadedRandom = false;
+
 adminRouter.post('/load-data', adminRouteAuth, async function (req, res) {
     if(req.body.loadedData){
         let contents = req.body.loadedData
@@ -206,24 +208,32 @@ adminRouter.post('/load-data', adminRouteAuth, async function (req, res) {
         }
         res.sendStatus(200)
     } else {
-        let results = await fs.readFile('./data/randomBoardData.csv','utf8')
-        let contents = results.split("\n")
-        console.log(contents)
-        for(let i = 0; i < contents.length; i++){
-            if(contents[i].length !== 0){
-                let parsedLine = contents[i].split(",")
-                const obj = {
-                    boardID: parseInt(parsedLine[0]),
-                    stationID: parseInt(parsedLine[1]),
-                    userID: parseInt(parsedLine[2]),
-                    boardStatus: parsedLine[3],
-                    date: parsedLine[4],
-                    time: parsedLine[5]
+        if(!loadedRandom){
+            let results = await fs.readFile('./data/randomBoardData.csv','utf8')
+            let contents = results.split("\n")
+            console.log(contents)
+            for(let i = 0; i < contents.length; i++){
+                if(contents[i].length !== 0){
+                    let parsedLine = contents[i].split(",")
+                    const obj = {
+                        boardID: parseInt(parsedLine[0]),
+                        stationID: parseInt(parsedLine[1]),
+                        userID: parseInt(parsedLine[2]),
+                        boardStatus: parsedLine[3],
+                        date: parsedLine[4],
+                        time: parsedLine[5]
+                    }
+                    await moveBoards(obj, false)
                 }
-                await moveBoards(obj, false)
             }
+            res.sendStatus(200)
+            loadedRandom = true
+        } else {
+            res.json({
+                error: 'Random Data Already Loaded'
+            })
         }
-        res.sendStatus(200)
+
     }
 })
 
