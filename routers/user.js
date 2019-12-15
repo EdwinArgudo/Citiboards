@@ -3,6 +3,8 @@ const { Pool, Client } = require('pg')
 const bcrypt = require('bcryptjs')
 const userRouteAuth = require('../middleware/UserRouteAuth')
 const bcryptHelpers = require('../auxiliary/BcryptHelpers')
+const timestamp = require('time-stamp');
+const fs = require('fs').promises;
 
 // Database
 
@@ -86,6 +88,62 @@ userRouter.post('/register', async function(req, res) {
     })
 })
 
+userRouter.get('/inventory', function(req,res){
+    (async () => {
+        const client = await pool.connect()
+        let stations_data = null
+        try {
+            stations_data = await client.query("SELECT station_id, COUNT(*) FROM boards WHERE board_status = 'parked' GROUP BY station_id ORDER BY station_id", [])
+        } catch (e) {
+            throw new Error("Database Error")
+        } finally {
+            client.release()
+        }
+
+        res.json({
+            stations_data: stations_data.rows
+        });
+
+    })().catch(e => {
+        res.json({
+          error: e.message
+        })
+    })
+})
+
+userRouter.get('/has-board', function(req,res){
+    (async () => {
+        const client = await pool.connect()
+        const user_id = req.session.key
+        let user_data = null
+        try {
+            user_data = await client.query("SELECT * FROM boards WHERE board_status = 'in_use' AND user_id = $1 ", [user_id])
+        } catch (e) {
+            throw new Error("Database Error")
+        } finally {
+            client.release()
+        }
+
+        let user_has_board = (user_data.rows.length !== 0 ? true : false)
+        let ret = {
+            has_board: user_has_board
+        }
+        if(user_has_board){
+            ret["board_info"] = user_data.rows[0]
+        } else {
+            ret["board_info"] = []
+        }
+
+        console.log(ret)
+        res.json(ret);
+
+    })().catch(e => {
+        res.json({
+          error: e.message
+        })
+    })
+})
+
 userRouter.post('/authenticate', function(req, res) {
     //const { username, password } = req.body
 
@@ -120,6 +178,141 @@ userRouter.get('/logout',function(req,res){
         req.session.destroy()
     }
     res.end('done logging out')
+})
+
+function moveBoards(obj, generateTime) {
+    return new Promise((resolve, reject) => {
+        (async () => {
+             console.log(obj)
+            const client = await pool.connect()
+            let date = timestamp("YYYY-MM-DD")
+            let _time = timestamp("HH:mm:ss")
+            if(!generateTime){
+                date = obj.date
+                _time = obj.time
+            }
+            let curr_data = null;
+
+            try {
+                curr_data = await client.query("SELECT * FROM boards WHERE board_id = $1", [obj.boardID])
+            } catch(e) {
+                throw new Error("Board Doesn't Exists")
+                client.release()
+            }
+
+            try {
+                if(obj.boardStatus === 'in_use'){
+                    let user_data = await client.query("SELECT COUNT(*) FROM boards WHERE board_status = 'in_use' AND user_id = $1", [obj.userID])
+                    if(user_data.rows[0].count > 0){
+                        throw "error!"
+                    }
+                }
+
+            } catch(e) {
+                throw new Error("Please return board before checking out a new one")
+                client.release()
+            }
+
+            //console.log(curr_data)
+
+            const beingCheckedOut = (obj.boardStatus === "in_use")
+            const currAtStation =  (curr_data.rows[0].board_status === "parked")
+            console.log("beingCheckedOut", beingCheckedOut)
+            console.log("currAtStation", currAtStation)
+
+            if(!((currAtStation && beingCheckedOut) || (!currAtStation && !beingCheckedOut))){
+                throw new Error("Invalid Update")
+            }
+
+            if(!beingCheckedOut){
+                try {
+                    const station_inventory = await client.query("SELECT COUNT(*) FROM boards WHERE board_status = 'parked' AND station_id = $1", [obj.stationID])
+                    const station_capacity = await client.query("SELECT capacity FROM stations WHERE station_id = $1", [obj.stationID])
+                    const inventory = station_inventory.rows[0].count
+                    const capacity = station_capacity.rows[0].capacity
+                    if(inventory === capacity){
+                        throw new Error("Station at Max Capacity")
+                        client.release()
+                    }
+                }  catch(e) {
+                    throw new Error("Station at Max Capacity")
+                    client.release()
+                }
+            }
+
+            const curr_user = curr_data.rows[0].user_id
+
+            if(!beingCheckedOut && (curr_user != obj.userID)){
+                throw new Error("Checked out board cannot be returned by different user")
+            }
+
+            console.log("No Obv Errors - Lets Update")
+
+            let columns = "(station_id, user_id, board_status, last_transaction_date, last_transaction_time)"
+            let quant = "($2, $3, $4, $5, $6)"
+            let updateQueryValues = [obj.boardID, obj.stationID,  obj.userID, obj.boardStatus, date, _time]
+            if(beingCheckedOut){
+                updateQueryValues[1] = curr_data.rows[0].station_id
+            } else {
+                // columns = "(user_id, board_status, last_transaction_date, last_transaction_time)"
+                // updateQueryValues = [obj.boardID, obj.userID, obj.boardStatus, date, _time]
+                // quant = "($2, $3, $4, $5)"
+            }
+            console.log(updateQueryValues)
+            const updateQuery = `UPDATE boards SET ${columns} = ${quant} WHERE board_id = $1 RETURNING *`
+            try {
+                const user_data = await client.query(updateQuery, updateQueryValues)
+                console.log(user_data.rows[0])
+            } catch (e) {
+                throw new Error("Database Error")
+            } finally {
+                client.release()
+            }
+
+            //await transactionalLogStream.write(`${fullQueryValues.join(",")}\n`)
+            console.log(`${updateQueryValues.join(",")}\n`)
+            //const a = await fs.writeFile('transactionalLogs.txt', "hi", 'utf-8')
+            //console.log(a)
+            const transactionalLogStream = await fs.appendFile('./data/transactionalLogs.csv',`${updateQueryValues.join(",")}\n`)
+            return resolve("did it!");
+
+        })().catch(e => {
+            return reject(e);
+        })
+    })
+
+}
+
+userRouter.post('/action', function(req, res) {
+    let obj = req.body
+    obj['userID'] = req.session.key
+    if(req.body.boardStatus === "in_use"){
+        (async () => {
+            const client = await pool.connect()
+            try {
+                const board = await client.query("SELECT * FROM boards WHERE station_id = $1 AND board_status = 'parked' LIMIT 1", [obj.stationID])
+                obj['boardID'] = parseInt(board.rows[0].board_id)
+                console.log('chose board', obj['boardID'])
+            } catch(e) {
+                throw new Error("No Boards Available At That Station")
+                client.release()
+            } finally {
+                client.release()
+            }
+
+            await moveBoards(obj, true)
+                .then(() => res.sendStatus(200))
+
+        })().catch(e => {
+            res.json({ error: e.message })
+        })
+    } else {
+        console.log(obj)
+        moveBoards(obj, true)
+            .then(() => res.sendStatus(200))
+            .catch(e => res.json({ error: e.message }))
+    }
+
 })
 
 module.exports = userRouter;

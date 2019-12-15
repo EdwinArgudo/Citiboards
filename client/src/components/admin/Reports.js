@@ -4,6 +4,7 @@ import axios from 'axios'
 import StationSimulator from './StationSimulator'
 import HistoricalReport from './HistoricalReport'
 import StationRebalancing from './StationRebalancing'
+import MissingBoards from './MissingBoards'
 
 export default class Reports extends Component {
     constructor() {
@@ -118,9 +119,7 @@ export default class Reports extends Component {
                 <div class="card bg-light mb-3">
                     <div class="card-header">Missing Boards Report</div>
                     <div class="card-body">
-                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                        <form onSubmit={this.markMissingBoards}>
-                        </form>
+                        <MissingBoards />
                     </div>
                 </div>
             </div>

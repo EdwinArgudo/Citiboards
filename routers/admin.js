@@ -7,7 +7,7 @@ const timestamp = require('time-stamp');
 const fs = require('fs').promises;
 const shell = require('shelljs');
 const STATIONS = require('../data/stations.json')
-// const split = require('split');
+const moment = require('moment');
 
 // Database
 
@@ -109,6 +109,19 @@ function moveBoards(obj, generateTime) {
                 client.release()
             }
 
+            try {
+                if(obj.boardStatus === 'in_use'){
+                    let user_data = await client.query("SELECT COUNT(*) FROM boards WHERE board_status = 'in_use' AND user_id = $1", [obj.userID])
+                    if(user_data.rows[0].count > 0){
+                        throw "error!"
+                    }
+                }
+
+            } catch(e) {
+                throw new Error("Please return board before checking out a new one")
+                client.release()
+            }
+
             //console.log(curr_data)
 
             const beingCheckedOut = (obj.boardStatus === "in_use")
@@ -185,32 +198,55 @@ adminRouter.post('/station-simulator', adminRouteAuth, function(req, res) {
         .catch(e => res.json({ error: e.message }))
 })
 
+let loadedRandom = false;
+
 adminRouter.post('/load-data', adminRouteAuth, async function (req, res) {
     if(req.body.loadedData){
         let contents = req.body.loadedData
         for(let i = 0; i < contents.length; i++){
-            await moveBoards(contents[i], false)
+            let obj = {
+                boardID: contents[i].board_id,
+                stationID: contents[i].station_id,
+                userID: 1,
+                boardStatus: "in_use",
+            }
+            await moveBoards(obj, true)
+            obj = {
+                boardID: contents[i].board_id,
+                stationID: contents[i].new_station_id,
+                userID: 1,
+                boardStatus: "parked",
+            }
+            await moveBoards(obj, true)
         }
         res.sendStatus(200)
     } else {
-        let results = await fs.readFile('./data/randomBoardData.csv','utf8')
-        let contents = results.split("\n")
-        console.log(contents)
-        for(let i = 0; i < contents.length; i++){
-            if(contents[i].length !== 0){
-                let parsedLine = contents[i].split(",")
-                const obj = {
-                    boardID: parseInt(parsedLine[0]),
-                    stationID: parseInt(parsedLine[1]),
-                    userID: parseInt(parsedLine[2]),
-                    boardStatus: parsedLine[3],
-                    date: parsedLine[4],
-                    time: parsedLine[5]
+        if(!loadedRandom){
+            let results = await fs.readFile('./data/randomBoardData.csv','utf8')
+            let contents = results.split("\n")
+            console.log(contents)
+            for(let i = 0; i < contents.length; i++){
+                if(contents[i].length !== 0){
+                    let parsedLine = contents[i].split(",")
+                    const obj = {
+                        boardID: parseInt(parsedLine[0]),
+                        stationID: parseInt(parsedLine[1]),
+                        userID: parseInt(parsedLine[2]),
+                        boardStatus: parsedLine[3],
+                        date: parsedLine[4],
+                        time: parsedLine[5]
+                    }
+                    await moveBoards(obj, false)
                 }
-                await moveBoards(obj, false)
             }
+            res.sendStatus(200)
+            loadedRandom = true
+        } else {
+            res.json({
+                error: 'Random Data Already Loaded'
+            })
         }
-        res.sendStatus(200)
+
     }
 })
 
@@ -266,120 +302,166 @@ adminRouter.get('/generate-reports', adminRouteAuth, function(req, res){
         })
 })
 
-adminRouter.get('/historical-reports/:boardID', adminRouteAuth, function(req, res){
+adminRouter.get('/historical-reports/:boardID', adminRouteAuth, async function(req, res){
     const boardID = parseInt(req.params.boardID)
+    let transactions = await fs.readFile('./data/transactionalLogs.csv','utf8')
+    let contents = transactions.split("\n")
+    console.log(contents)
+    let specific = []
+    for(let i = 0; i < contents.length; i++){
+        if(contents[i].length !== 0){
+            let parsedLine = contents[i].split(",")
+            console.log(parseInt(parsedLine[0]),boardID)
+            if(parseInt(parsedLine[0]) === boardID){
+                const obj = {
+                    stationID: parseInt(parsedLine[1]),
+                    boardStatus: parsedLine[3],
+                    date: parsedLine[4],
+                    time: parsedLine[5]
+                }
+                specific.push(obj)
+            }
+        }
+    }
+
+    console.log(specific)
+
+    let boardData = [];
+
+    for(let i = 0; i < specific.length; i++){
+        let curr = specific[i]
+        if(curr.boardStatus === 'parked' && i != 0){
+            let in_use = specific[i - 1]
+            let parked_timestamp = moment(`${curr.date} ${curr.time}`)
+            let in_use_timestamp = moment(`${in_use.date} ${in_use.time}`)
+            let time_difference = parked_timestamp.diff(in_use_timestamp, 'minutes')
+            let move = {
+                date: in_use.date,
+                time: in_use.time,
+                s_start: in_use.stationID,
+                s_end: curr.stationID,
+                duration: time_difference
+            }
+            boardData.push(move)
+        }
+
+    }
+    console.log(boardData)
+    res.json({ data: boardData })
+
+
     // Read Output from MapReduce
     // s_start = station start
-    let boardData = null;
-    if(boardID === 1){
-        boardData = [
-            {
-                date: "2019-01-01",
-                time: "12:00:00",
-                s_start: 1,
-                s_end: 9,
-                duration: 30
-            },
-            {
-                date: "2019-01-01",
-                time: "13:30:00",
-                s_start: 9,
-                s_end: 5,
-                duration: 15
-            },
-            {
-                date: "2019-01-01",
-                time: "14:00:00",
-                s_start: 5,
-                s_end: 4,
-                duration: 75
-            },
-            {
-                date: "2019-01-01",
-                time: "16:00:00",
-                s_start: 4,
-                s_end: 2,
-                duration: 45
-            },
-            {
-                date: "2019-01-01",
-                time: "17:30:00",
-                s_start: 2,
-                s_end: 7,
-                duration: 15
-            }
-        ]
-    } else if (boardID === 2){
-        boardData = [
-            {
-                date: "2019-01-01",
-                time: "12:00:00",
-                s_start: 2,
-                s_end: 8,
-                duration: 30
-            },
-            {
-                date: "2019-01-01",
-                time: "13:30:00",
-                s_start: 8,
-                s_end: 6,
-                duration: 15
-            },
-            {
-                date: "2019-01-01",
-                time: "14:00:00",
-                s_start: 6,
-                s_end: 3,
-                duration: 75
-            },
-            {
-                date: "2019-01-01",
-                time: "16:00:00",
-                s_start: 3,
-                s_end: 7,
-                duration: 45
-            },
-            {
-                date: "2019-01-01",
-                time: "17:30:00",
-                s_start: 7,
-                s_end: 4,
-                duration: 15
-            }
-        ]
-    } else {
-        boardData = [
-            {
-                date: "2019-01-01",
-                time: "12:00:00",
-                s_start: 1,
-                s_end: 6,
-                duration: 10
-            },
-            {
-                date: "2019-01-01",
-                time: "12:20:00",
-                s_start: 6,
-                s_end: 3,
-                duration: 60
-            },
-            {
-                date: "2019-01-01",
-                time: "15:00:00",
-                s_start: 3,
-                s_end: 2,
-                duration: 10
-            },
-            {
-                date: "2019-01-01",
-                time: "20:00:00",
-                s_start: 2,
-                s_end: 2,
-                duration: 10
-            }
-        ]
-    }
-    res.json({ data: boardData  })
+    // let boardData = null;
+    // if(boardID === 1){
+    //     boardData = [
+    //         {
+    //             date: "2019-01-01",
+    //             time: "12:00:00",
+    //             s_start: 1,
+    //             s_end: 9,
+    //             duration: 30
+    //         },
+    //         {
+    //             date: "2019-01-01",
+    //             time: "13:30:00",
+    //             s_start: 9,
+    //             s_end: 5,
+    //             duration: 15
+    //         },
+    //         {
+    //             date: "2019-01-01",
+    //             time: "14:00:00",
+    //             s_start: 5,
+    //             s_end: 4,
+    //             duration: 75
+    //         },
+    //         {
+    //             date: "2019-01-01",
+    //             time: "16:00:00",
+    //             s_start: 4,
+    //             s_end: 2,
+    //             duration: 45
+    //         },
+    //         {
+    //             date: "2019-01-01",
+    //             time: "17:30:00",
+    //             s_start: 2,
+    //             s_end: 7,
+    //             duration: 15
+    //         }
+    //     ]
+    // } else if (boardID === 2){
+    //     boardData = [
+    //         {
+    //             date: "2019-01-01",
+    //             time: "12:00:00",
+    //             s_start: 2,
+    //             s_end: 8,
+    //             duration: 30
+    //         },
+    //         {
+    //             date: "2019-01-01",
+    //             time: "13:30:00",
+    //             s_start: 8,
+    //             s_end: 6,
+    //             duration: 15
+    //         },
+    //         {
+    //             date: "2019-01-01",
+    //             time: "14:00:00",
+    //             s_start: 6,
+    //             s_end: 3,
+    //             duration: 75
+    //         },
+    //         {
+    //             date: "2019-01-01",
+    //             time: "16:00:00",
+    //             s_start: 3,
+    //             s_end: 7,
+    //             duration: 45
+    //         },
+    //         {
+    //             date: "2019-01-01",
+    //             time: "17:30:00",
+    //             s_start: 7,
+    //             s_end: 4,
+    //             duration: 15
+    //         }
+    //     ]
+    // } else {
+    //     boardData = [
+    //         {
+    //             date: "2019-01-01",
+    //             time: "12:00:00",
+    //             s_start: 1,
+    //             s_end: 6,
+    //             duration: 10
+    //         },
+    //         {
+    //             date: "2019-01-01",
+    //             time: "12:20:00",
+    //             s_start: 6,
+    //             s_end: 3,
+    //             duration: 60
+    //         },
+    //         {
+    //             date: "2019-01-01",
+    //             time: "15:00:00",
+    //             s_start: 3,
+    //             s_end: 2,
+    //             duration: 10
+    //         },
+    //         {
+    //             date: "2019-01-01",
+    //             time: "20:00:00",
+    //             s_start: 2,
+    //             s_end: 2,
+    //             duration: 10
+    //         }
+    //     ]
+    // }
+    // res.json({ data: boardData  })
 })
 
 adminRouter.get('/station-rebalancing', adminRouteAuth, function(req,res){
@@ -419,16 +501,55 @@ adminRouter.get('/station-rebalancing', adminRouteAuth, function(req,res){
             if(possess < avg){
                 let contribute = avg - possess
                 for(let j = 0; j < contribute; j++){
-                    let board = queue.front()
-                    board['new_station_id'] = i + 1
-                    changes.push(board)
-                    queue.dequeue()
+                    if(!queue.isEmpty()){
+                        let board = queue.front()
+                        board['new_station_id'] = i + 1
+                        changes.push(board)
+                        queue.dequeue()
+                    }
                 }
             }
 
         }
+
+        console.log(changes)
         res.json({
             rebalancing_data: changes
+        });
+
+    })().catch(e => {
+        res.json({
+          error: e.message
+        })
+    })
+})
+
+adminRouter.get('/missing-boards', adminRouteAuth, function(req, res){
+    (async () => {
+        const client = await pool.connect()
+        let board_data = null
+        try {
+            board_data = await client.query("SELECT * FROM boards WHERE board_status = 'in_use'", [])
+        } catch (e) {
+            throw new Error("Database Error")
+        } finally {
+            client.release()
+        }
+
+        const in_use_boards = board_data.rows
+        const missing_boards = []
+        for(let i = 0; i < in_use_boards.length; i++){
+            const timestamp = moment(`${in_use_boards[i].last_transaction_date} ${in_use_boards[i].last_transaction_time}`)
+            const now = moment()
+
+            if(now.diff(timestamp, 'days') > 7){
+                missing_boards.push(in_use_boards[i])
+            }
+        }
+        console.log(missing_boards)
+
+        res.json({
+            missing_boards
         });
 
     })().catch(e => {
@@ -443,7 +564,7 @@ adminRouter.get('/inventory', adminRouteAuth, function(req,res){
         const client = await pool.connect()
         let stations_data = null
         try {
-            stations_data = await client.query("SELECT station_id, COUNT(*) FROM boards WHERE board_status = 'parked' GROUP BY station_id", [])
+            stations_data = await client.query("SELECT station_id, COUNT(*) FROM boards WHERE board_status = 'parked' GROUP BY station_id ORDER BY station_id", [])
         } catch (e) {
             throw new Error("Database Error")
         } finally {
@@ -469,5 +590,3 @@ adminRouter.get('/logout',function(req,res){
 })
 
 module.exports = adminRouter;
-
-//SELECT board_id FROM boards WHERE board_status = 'parked' GROUP BY station_id

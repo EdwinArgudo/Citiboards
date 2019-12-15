@@ -3,6 +3,7 @@ import { Redirect } from 'react-router-dom';
 import axios from 'axios'
 
 export default function withAuth(ComponentToProtect) {
+    
     return class extends Component {
         constructor(props) {
             super(props);
@@ -10,6 +11,8 @@ export default function withAuth(ComponentToProtect) {
             this.state = {
                 redirect: false
             };
+
+            console.log(this.props)
         }
 
         componentDidMount(){
