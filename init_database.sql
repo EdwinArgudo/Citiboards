@@ -7,15 +7,18 @@ DROP TABLE IF EXISTS stations;
 DROP TYPE adm_usr;
 DROP TYPE use_status;
 
+CREATE SEQUENCE authentication_id_seq;
 CREATE TYPE adm_usr AS ENUM('admin', 'user');
 CREATE TYPE use_status AS ENUM('in_use', 'parked');
 
 CREATE TABLE authentication (
-    id SERIAL PRIMARY KEY,
+    id INT PRIMARY KEY DEFAULT nextval('authentication_id_seq'),
     username TEXT UNIQUE NOT NULL,
     password TEXT NOT NULL,
     user_type adm_usr NOT NULL
 );
+
+ALTER SEQUENCE authentication_id_seq OWNED BY authentication.id;
 
 CREATE TABLE users (
     user_id INT PRIMARY KEY REFERENCES authentication(id),
@@ -162,3 +165,5 @@ INSERT INTO boards(board_id, station_id, user_id, board_status, last_transaction
 VALUES (39, 9, 1, 'parked', '2019-01-01', '00:00:00');
 INSERT INTO boards(board_id, station_id, user_id, board_status, last_transaction_date, last_transaction_time)
 VALUES (40, 10, 1, 'parked', '2019-01-01', '00:00:00');
+
+SELECT setval('authentication_id_seq', (SELECT MAX(id) FROM authentication), true);

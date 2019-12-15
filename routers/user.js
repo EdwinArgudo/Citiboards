@@ -53,6 +53,7 @@ userRouter.post('/register', async function(req, res) {
         const hashed_pwd = await bcryptHelpers.hashPassword(req.body.password)
         const client = await pool.connect()
         let result = null
+        console.log(req.body)
         try {
             await client.query('BEGIN')
             const insertAuth = 'INSERT INTO authentication(username, password, user_type) VALUES($1,$2,$3) RETURNING id'
@@ -60,6 +61,7 @@ userRouter.post('/register', async function(req, res) {
             result = await client.query(insertAuth, insertAuthValues)
         } catch (e) {
             await client.query('ROLLBACK')
+            console.log(e)
             throw new Error("User Already Exists")
             client.release()
         }

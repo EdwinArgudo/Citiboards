@@ -54,8 +54,9 @@ export default class Register extends Component {
                 <h1 class="display-3">Register</h1>
                 <form onSubmit={this.onSubmit}>
                     <fieldset>
+                        <small class="form-text text-muted">We'll never share your info with anyone else.</small>
                         <div class="form-group">
-                            <label>Email address</label>
+                            <label>Username</label>
                             <input type="username"
                             class="form-control"
                             name="username"
@@ -63,7 +64,6 @@ export default class Register extends Component {
                             value={this.state.username}
                             onChange={this.handleInputChange}
                             required />
-                            <small class="form-text text-muted">We'll never share your email with anyone else.</small>
                         </div>
                         <div class="form-group">
                             <label>Password</label>

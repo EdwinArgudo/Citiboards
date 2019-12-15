@@ -32,6 +32,10 @@ export default class Reports extends Component {
 
     generateReports = (event) => {
         event.preventDefault();
+        this.setState({
+            message: "Processing...",
+            alert: 'info'
+        })
         axios.get('/api/v1/admin/generate-reports')
         .then(res => {
             console.log(res)
@@ -69,11 +73,30 @@ export default class Reports extends Component {
     render() {
         let message = ""
         if(this.state.message !== ""){
+            let type = null
+            let heading = null
+            let m = ( <p class="mb-0"> { this.state.message }</p> )
+            switch(this.state.alert) {
+                case "info":
+                    type = "info"
+                    heading = "Processing..."
+                    m = null
+                    break;
+                case "good":
+                    type = "success"
+                    heading = "Success!"
+                    break;
+                case "bad":
+                    type = "warning"
+                    heading = "Error!"
+                    break;
+            }
+
             message = (
-                 <div class={`alert alert-dismissible alert-${ this.state.alert === "good" ? "success" : "warning"}`}>
+                 <div class={`alert alert-dismissible alert-${type}`}>
                     <button type="button" class="close" data-dismiss="alert">&times;</button>
-                    <h4 class="alert-heading">{ this.state.alert === "good" ? "Success!" : "Error!"}</h4>
-                    <p class="mb-0"> { this.state.message }</p>
+                    <h4 class="alert-heading">{heading}</h4>
+                    { m }
                 </div>
             )
         }

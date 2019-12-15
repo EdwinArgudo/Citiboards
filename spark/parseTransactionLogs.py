@@ -4,7 +4,7 @@ from datetime import datetime
 conf = SparkConf().setAppName('CitiBoardLogger').setMaster("local")
 sc = SparkContext(conf=conf)
 
-logFile = sc.textFile("../data/transactionalLogs.csv")
+logFile = sc.textFile("./data/transactionalLogs.csv")
 
 lineAsArr = logFile.map(lambda s: s.split(","))
 brd_grps = lineAsArr.map(lambda array: (array[0], [array[1], array[2], array[3], array[4], array[5]])) \
@@ -55,16 +55,12 @@ def groupUsers(allTrans):
 
 
 def printData(brd_usr_grp):
-    print("board:", brd_usr_grp[0])
-
-    for key, value in brd_usr_grp[1].items():
-        print("\tUser:", key, "=> {",                    \
-              "\n\t\tdate_end:", value[0], \
-              "\n\t\ttime_end:", value[1], \
-              "\n\t\ts_start:" , value[2], \
-              "\n\t\ts_end:"   , value[3], \
-              "\n\t\tduration:", value[4], \
-              "\n\t}")
+    board_id = brd_usr_grp[0]
+    last_entry = None
+    with open(f'./historical_reports/board_{board_id}.csv', 'w+') as f:
+        for key, value in brd_usr_grp[1].items():
+            row = f'{value[0]}, {value[1]}, {value[2]}, {value[3]}, {value[4]}\n'
+            f.write(row)
 
 
 brd_usr_grps = brd_grps.mapValues(groupUsers)
