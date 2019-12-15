@@ -12,11 +12,8 @@ export default class StationSimulator extends Component {
             userID: '',
             stationInventory: [],
             message: '',
-            alert: ''
-            // ,
-            // stations_table: [],
-            // boards_table: [],
-            // boards_stations_table:[]
+            alert: '',
+            randomDataLoaded: false
         }
     }
 
@@ -113,7 +110,8 @@ export default class StationSimulator extends Component {
                 } else {
                     this.setState({
                         message: "Random Data Loaded!",
-                        alert: 'good'
+                        alert: 'good',
+                        randomDataLoaded: true
                     });
                 }
             })
@@ -150,6 +148,14 @@ export default class StationSimulator extends Component {
                 </tr>
         )
 
+        let randomDataButton = null
+        if(this.state.randomDataLoaded === false){
+            randomDataButton = (
+                <form onSubmit={this.onLoadRandomData}>
+                    <input type="submit" value="Load Random Data" class="btn btn-success"/>
+                </form>
+            )
+        }
         return (
             <div class="container-fluid mt-3 mb-3">
             { message }
@@ -220,9 +226,7 @@ export default class StationSimulator extends Component {
                             </thead>
                             { mappedStationsInventory }
                         </table>
-                        <form onSubmit={this.onLoadRandomData}>
-                            <input type="submit" value="Load Random Data" class="btn btn-success"/>
-                        </form>
+                        { randomDataButton }
                     </div>
                 </div>
             </div>
