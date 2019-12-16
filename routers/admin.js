@@ -8,6 +8,7 @@ const fs = require('fs').promises;
 const shell = require('shelljs');
 const STATIONS = require('../data/stations.json')
 const moment = require('moment');
+const cron = require('node-cron');
 
 // Database
 
@@ -278,6 +279,10 @@ adminRouter.get('/peek-database', function(req, res) {
         })
     })
 })
+
+cron.schedule('* * * * *', async () => {
+    await generateReports()
+});
 
 function generateReports(){
     return new Promise((resolve, reject) => {
