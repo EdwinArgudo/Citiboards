@@ -24,7 +24,7 @@ u
 
 Feel free to create your own account on the register page (http://35.203.25.149/register) \
 Theres also some random data you can load by pressing a button on the Station Simulator section of the Admin Panel \
-Be sure to click the "Generate Reports" button on the Reports section of the Admin Panel to get the latest report data \
+Reports are generated with latest data every minute via a batch operation
 
 
 # CitiBoard (Local Mac Development)
