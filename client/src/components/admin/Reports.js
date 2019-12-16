@@ -30,38 +30,38 @@ export default class Reports extends Component {
       });
     }
 
-    generateReports = (event) => {
-        event.preventDefault();
-        this.setState({
-            message: "Processing...",
-            alert: 'info'
-        })
-        axios.get('/api/v1/admin/generate-reports')
-        .then(res => {
-            console.log(res)
-            if (res['data']['error']) {
-                this.setState({
-                    message: res['data']['error'],
-                    alert: 'bad'
-                });
-                const error = new Error(res['data']['error']);
-                throw error;
-            } else {
-                this.setState({
-                    message: "Reports Generated!",
-                    alert: 'good'
-                })
-            }
-        })
-        .catch(err => {
-            console.error(err);
-            //alert(err.message);
-            this.setState({
-                message: err.message,
-                alert: 'bad'
-            });
-        });
-    }
+    // generateReports = (event) => {
+    //     event.preventDefault();
+    //     this.setState({
+    //         message: "Processing...",
+    //         alert: 'info'
+    //     })
+    //     axios.get('/api/v1/admin/generate-reports')
+    //     .then(res => {
+    //         console.log(res)
+    //         if (res['data']['error']) {
+    //             this.setState({
+    //                 message: res['data']['error'],
+    //                 alert: 'bad'
+    //             });
+    //             const error = new Error(res['data']['error']);
+    //             throw error;
+    //         } else {
+    //             this.setState({
+    //                 message: "Reports Generated!",
+    //                 alert: 'good'
+    //             })
+    //         }
+    //     })
+    //     .catch(err => {
+    //         console.error(err);
+    //         //alert(err.message);
+    //         this.setState({
+    //             message: err.message,
+    //             alert: 'bad'
+    //         });
+    //     });
+    // }
 
     getHistoricalReport = (event) => {
         event.preventDefault();
@@ -105,12 +105,8 @@ export default class Reports extends Component {
         return (
             <div class="container-fluid mt-3 mb-3">
                 <h1 class="display-5">Reports</h1>
+                <small class="form-text text-muted">Reports Compiled By Backend Every Minute.</small>
                 { message }
-                <form onSubmit={this.generateReports}>
-                    <p class="lead">
-                        <input type="submit" class="btn btn-success" value="Generate Reports"/>
-                    </p>
-                </form>
                 <hr class="my-4"/>
                 <div class="card bg-light mb-3">
                     <div class="card-header">Historical Report</div>
@@ -149,6 +145,8 @@ export default class Reports extends Component {
         );
     }
 }
-// <p class="lead">
-//     <input type="submit" class="btn btn-success" value=""/>
-// </p>
+// <form onSubmit={this.generateReports}>
+//     <p class="lead">
+//         <input type="submit" class="btn btn-success" value="Generate Reports"/>
+//     </p>
+// </form>
