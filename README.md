@@ -1,6 +1,6 @@
 # CitiBoard (Examples)
 
-Navigate to http://35.203.25.149/ for users page, http://35.203.25.149/admin for admins page
+Navigate to http://35.245.46.211/ for users page, http://35.245.46.211/admin for admins page
 
 There are 40 boards in the system, 10 stations, and 6 dummy user accounts, 1 dummy admin account
 
@@ -22,9 +22,9 @@ And its password is:
 u
 ```
 
-Feel free to create your own account on the register page (http://35.203.25.149/register) \
-Theres also some random data you can load by pressing a button on the Station Simulator section of the Admin Panel \
-Reports are generated with latest data every minute via a batch operation
+Feel free to create your own account on the register page (http://35.245.46.211/register) \
+Reports are generated with latest data every minute via a batch operation \
+Comes preloaded with some random data
 
 
 # CitiBoard (Local Mac Development)
